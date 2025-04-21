@@ -9,7 +9,7 @@ with open(file, "r") as file:
     password = file.read().rstrip()
 
 # TODO
-conn_string = "host=hadoop-04.uni.innopolis.ru port=5432 user=teamx dbname=teamx_projectdb password={}".format(
+conn_string = "host=hadoop-04.uni.innopolis.ru port=5432 user=team26 dbname=team26_projectdb password={}".format(
     password
 )
 
