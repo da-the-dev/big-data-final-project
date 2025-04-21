@@ -9,3 +9,8 @@ rm data/us-traffic-congestions-2016-2022.zip
 
 # Inserting everything to the database  
 python scripts/build_projectdb.py
+
+password=$(head -n 1 secrets/.psql.pass)
+
+# Importing everything to the database
+sqoop import-all-tables --connect jdbc:postgresql://hadoop-04.uni.innopolis.ru/team26 --username teamx --password $password --compression-codec=snappy --compress --as-avrodatafile --warehouse-dir=project/warehouse --m 1
