@@ -1,0 +1,1 @@
+SELECT * FROM traffic LIMIT 10;
