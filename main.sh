@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "This is a test run of main.sh on the deploy branch 🗿"
+echo "This is a test run of main.sh on the deploy branch 🗿 - second try"
 
 # # Pre-processing
 # echo "Running pre-processing"
