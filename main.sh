@@ -2,6 +2,10 @@
 
 echo "This is a test run of main.sh on the deploy branch 🗿 - second try"
 
+# Data collection
+echo "Running data collection"
+bash scripts/data_collection.sh
+
 # # Pre-processing
 # echo "Running pre-processing"
 # bash scripts/preprocess.sh
@@ -19,9 +23,9 @@ echo "This is a test run of main.sh on the deploy branch 🗿 - second try"
 # echo "Running Stage 4 of the pipeline - Streamlit"
 # bash scripts/stage4.sh
 
-# # Post-processing
-# echo "Running post-processing!"
-# bash scripts/postprocess.sh
+# Post-processing
+echo "Running post-processing!"
+bash scripts/postprocess.sh
 
 # # Check the quality of the codes
 # echo "The quality of scripts in 'scripts/' folder\n"
