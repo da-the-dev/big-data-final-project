@@ -40,8 +40,7 @@ CREATE EXTERNAL TABLE accidents (
         weather_conditions STRING
     )
     CLUSTERED BY (distance) INTO 100 BUCKETS
-    STORED AS AVRO
-    LOCATION 'project/warehouse/accidents'
+    STORED AS AVRO LOCATION 'project/warehouse/accidents'
 --    TBLPROPERTIES ('avro.schema.url'='project/warehouse/avsc/accidents.avsc', 'avro.compress'='snappy');
     TBLPROPERTIES ('avro.compress'='snappy');
 
