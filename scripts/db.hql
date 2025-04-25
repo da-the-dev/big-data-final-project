@@ -1,4 +1,4 @@
-DROP DATABASE IF EXISTS team26_projectdb;
+DROP DATABASE IF EXISTS team26_projectdb CASCADE;
 
 CREATE DATABASE team26_projectdb LOCATION "project/hive/warehouse";
 USE team26_projectdb;
