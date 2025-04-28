@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS traffic (
     distance DECIMAL(10, 6) NOT NULL,
     delay_from_typical_traffic DECIMAL(10) NOT NULL,
     delay_from_free_flow_speed DECIMAL(10) NOT NULL,
-    congestion_speed DECIMAL(10, 6) NOT NULL,
+    congestion_speed VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     street VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS traffic (
     wind_dir VARCHAR(255) NOT NULL,
     wind_speed DECIMAL(10, 6) NOT NULL,
     precipitation DECIMAL(10, 6) NOT NULL,
-    weather_event VARCHAR(255) NOT NULL,
+    weather_event VARCHAR(255),
     weather_conditions VARCHAR(255) NOT NULL
 );
 

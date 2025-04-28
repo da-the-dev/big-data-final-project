@@ -15,7 +15,7 @@ CREATE EXTERNAL TABLE accidents (
     distance DECIMAL(10, 6),
     delay_from_typical_traffic DECIMAL(10),
     delay_from_free_flow_speed DECIMAL(10),
-    congestion_speed DECIMAL(10, 6),
+    congestion_speed STRING,
     description STRING,
     weather_time_stamp TIMESTAMP,
     temperature DECIMAL(10, 6),
