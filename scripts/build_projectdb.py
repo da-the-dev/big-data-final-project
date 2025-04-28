@@ -18,22 +18,30 @@ with psql.connect(conn_string) as conn:
     # Create a cursor for executing psql commands
     cur = conn.cursor()
     # Read the commands from the file and execute them.
+    
+    print("Creating tables...")
     with open(os.path.join("sql", "create_tables.sql")) as file:
         content = file.read()
         cur.execute(content)
     conn.commit()
-
+    print("Tables created!")
+    
     # Read the commands from the file and execute them.
+    print("Importing data...")
     with open(os.path.join("sql", "import_data.sql")) as file:
         commands = file.readlines()
-        with open(os.path.join("data", "us_congestion_2016_2022/us_congestion_2016_2022.csv"), "r") as depts:
-            cur.copy_expert(commands[0], depts)
+        with open(os.path.join("data", "us_congestion_2016_2022/us_congestion_2016_2022.csv"), "r") as data:
+            cur.copy_expert(commands[0], data)
             
     # If the sql statements are CRUD then you need to commit the change
     conn.commit()
+    print("Imported data!")
 
+    
     pprint(conn)
     cur = conn.cursor()
+    
+    print("Testing db...")
     # Read the sql commands from the file
     with open(os.path.join("sql", "test_database.sql")) as file:
         commands = file.readlines()
