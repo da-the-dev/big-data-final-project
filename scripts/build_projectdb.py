@@ -26,7 +26,7 @@ with psql.connect(conn_string) as conn:
     # Read the commands from the file and execute them.
     with open(os.path.join("sql", "import_data.sql")) as file:
         commands = file.readlines()
-        with open(os.path.join("data", "data/us_congestion_2016_2022/us_congestion_2016_2022.csv"), "r") as depts:
+        with open(os.path.join("data", "us_congestion_2016_2022/us_congestion_2016_2022.csv"), "r") as depts:
             cur.copy_expert(commands[0], depts)
             
     # If the sql statements are CRUD then you need to commit the change
