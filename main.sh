@@ -10,6 +10,10 @@
 # echo "Running pre-processing"
 # bash scripts/preprocess.sh
 
+# # Python setup
+# echo "Setting up python"
+# bash scripts/setup_python.sh
+
 # Run the big data pipeline
 echo "Running Stage 1 of the pipeline - PostgreSQL + Sqoop"
 bash scripts/stage1.sh
