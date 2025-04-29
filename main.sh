@@ -34,4 +34,4 @@ bash scripts/stage2.sh
 # echo "::============================================::"
 # pylint scripts
 
-echo "Done running the pipeline! 🤙"
+echo "Done running the pipeline!"
