@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# echo "This is a test run of main.sh on the deploy branch 🗿 - second try"
-
 # # Data collection
 # echo "Running data collection"
 # bash scripts/data_collection.sh
