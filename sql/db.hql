@@ -41,7 +41,10 @@ CREATE EXTERNAL TABLE accidents (
     )
     CLUSTERED BY (id) INTO 100 BUCKETS
     STORED AS AVRO LOCATION 'project/warehouse/accidents'
-    TBLPROPERTIES ('avro.schema.url'='project/warehouse/avsc/accidents.avsc', 'avro.compress'='snappy');
+    TBLPROPERTIES (
+        'avro.schema.url'='project/warehouse/avsc/accidents.avsc'
+        -- 'avro.compress'='snappy'
+    );
 
 
 SELECT * FROM accidents;
