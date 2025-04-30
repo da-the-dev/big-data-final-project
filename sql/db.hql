@@ -37,7 +37,7 @@ CREATE EXTERNAL TABLE accidents (
     weather_conditions STRING
 ) 
     PARTITIONED BY (
-        state STRING
+        state_part STRING
     )
     CLUSTERED BY (id) INTO 100 BUCKETS
     STORED AS AVRO LOCATION 'project/warehouse/accidents'
