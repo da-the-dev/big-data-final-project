@@ -5,7 +5,7 @@ source .venv/bin/activate
 python scripts/build_projectdb.py
 
 # Delete previous data
-hdfs dfs -rm project/warehouse
+hdfs dfs -rm -r project/warehouse
 
 # Importing everything to the database
 password=$(head -n 1 secrets/.psql.pass)
