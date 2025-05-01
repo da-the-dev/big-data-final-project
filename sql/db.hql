@@ -4,6 +4,7 @@ CREATE DATABASE team26_projectdb LOCATION "project/hive/warehouse";
 USE team26_projectdb;
 
 SET hive.parquet.timestamp.skip.conversion=true;
+SET parquet.int64.timestamp.unit=MILLIS;
 
 -- Create external table for traffic data
 CREATE EXTERNAL TABLE traffic (
