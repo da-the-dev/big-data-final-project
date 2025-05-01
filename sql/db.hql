@@ -75,6 +75,7 @@ LOCATION 'project/hive/warehouse/traffic_partitioned';
 
 SET hive.exec.dynamic.partition=true;
 SET hive.exec.dynamic.partition.mode=nonstrict;
+SET parquet.timestamp.skip.conversion=true;
 
 INSERT OVERWRITE TABLE traffic_partitioned 
 PARTITION(state, severity)
