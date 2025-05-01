@@ -18,7 +18,6 @@ sqoop import-all-tables \
   --compress \
   --as-parquetfile \
   --warehouse-dir=project/warehouse \
-  --m 4 \
-  --direct
+  --m 4
 
 echo "Data ingestion completed successfully!"
