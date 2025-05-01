@@ -84,7 +84,7 @@ PARTITION(state, severity)
 SELECT 
     id, start_lat, start_lng, 
     CAST(from_unixtime(start_time/1000)) as start_time,
-    CAST(from_unixtime(end_time/1000))  s end_time,
+    CAST(from_unixtime(end_time/1000)) as end_time,
     distance, delay_from_typical_traffic, 
     delay_from_free_flow_speed, congestion_speed,
     description, street, city, county, 
