@@ -3,6 +3,11 @@ DROP DATABASE IF EXISTS team26_projectdb CASCADE;
 CREATE DATABASE team26_projectdb LOCATION "project/hive/warehouse";
 USE team26_projectdb;
 
+-- Set timestamp conversion properties
+SET hive.parquet.timestamp.skip.conversion=true;
+SET hive.parquet.timestamp.write.int96=true;
+SET parquet.timestamp.skip.conversion=true;
+
 -- Create external table for traffic data
 CREATE EXTERNAL TABLE traffic (
   id STRING,
@@ -75,17 +80,19 @@ LOCATION 'project/hive/warehouse/traffic_partitioned';
 
 SET hive.exec.dynamic.partition=true;
 SET hive.exec.dynamic.partition.mode=nonstrict;
-SET parquet.timestamp.skip.conversion=true;
 
 INSERT OVERWRITE TABLE traffic_partitioned 
 PARTITION(state, severity)
 SELECT 
-    id, start_lat, start_lng, start_time, end_time, 
+    id, start_lat, start_lng, 
+    CAST(start_time AS TIMESTAMP) as start_time,
+    CAST(end_time AS TIMESTAMP) as end_time,
     distance, delay_from_typical_traffic, 
     delay_from_free_flow_speed, congestion_speed,
     description, street, city, county, 
     zip_code, local_time_zone, 
-    weather_station_airport_code, weather_time_stamp,
+    weather_station_airport_code, 
+    CAST(weather_time_stamp AS TIMESTAMP) as weather_time_stamp,
     temperature, wind_chill, humidity, pressure, 
     visibility, wind_dir, wind_speed, precipitation,
     weather_event, weather_conditions, 
