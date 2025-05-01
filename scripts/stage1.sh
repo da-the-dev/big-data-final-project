@@ -1,18 +1,9 @@
 #!/bin/bash
 
-# Inserting everything to the database
-source .venv/bin/activate
-python scripts/build_projectdb.py
+echo "Step 1: PostgreSQL"
+bash scripts/data_storage.sh
 
-# Delete previous data
-hdfs dfs -rm -r project/warehouse
+echo "Step 2: Sqoop"
+bash scripts/data_ingestion.sh
 
-# Importing everything to the database
-password=$(head -n 1 secrets/.psql.pass)
-sqoop import-all-tables --connect jdbc:postgresql://hadoop-04.uni.innopolis.ru/team26_projectdb --username team26 --password $password --compression-codec=snappy --compress --as-avrodatafile --warehouse-dir=project/warehouse --m 1
-
-mv -f *.avsc output/
-mv -f *.java output/
-
-hdfs dfs -mkdir -p project/warehouse/avsc
-hdfs dfs -put output/*.avsc project/warehouse/avsc
+echo "Stage 1 completed successfully!"
