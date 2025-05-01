@@ -5,7 +5,7 @@ password=$(head -n 1 secrets/.psql.pass)
 
 # Clear the target HDFS directory if it exists
 echo "Clearing HDFS target directory..."
-hdfs dfs -rm -r project/warehouse || true 
+hdfs dfs -rm -r -skipTrash project/warehouse || true 
 
 # Import data from PostgreSQL to HDFS using Sqoop
 echo "Importing data from PostgreSQL to HDFS using Sqoop..."
@@ -18,6 +18,7 @@ sqoop import-all-tables \
   --compress \
   --as-parquetfile \
   --warehouse-dir=project/warehouse \
-  --m 4
+  --m 4 \
+  --direct
 
 echo "Data ingestion completed successfully!"
