@@ -5,6 +5,9 @@ USE team26_projectdb;
 
 SET hive.parquet.timestamp.skip.conversion=true;
 SET parquet.int64.timestamp.unit=MILLIS;
+SET hive.exec.max.dynamic.partitions-200;
+SET hive.exec.max.dynamic.partitions.pernode=200;
+
 
 -- Create external table for traffic data
 CREATE EXTERNAL TABLE traffic (
