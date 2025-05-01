@@ -83,14 +83,14 @@ INSERT OVERWRITE TABLE traffic_partitioned
 PARTITION(state, severity)
 SELECT 
     id, start_lat, start_lng, 
-    CAST(from_unixtime(CAST(start_time/1000) AS BIGINT) AS TIMESTAMP) as start_time,
-    CAST(from_unixtime(CAST(end_time/1000) AS BIGINT) AS TIMESTAMP) as end_time,
+    CAST(from_unixtime(CAST(start_time/1000 AS BIGINT)) AS TIMESTAMP) AS start_time,
+    CAST(from_unixtime(CAST(end_time/1000 AS BIGINT)) AS TIMESTAMP) as end_time,
     distance, delay_from_typical_traffic, 
     delay_from_free_flow_speed, congestion_speed,
     description, street, city, county, 
     zip_code, local_time_zone, 
     weather_station_airport_code, 
-    CAST(from_unixtime(CAST(weather_time_stamp/1000) AS BIGINT) AS TIMESTAMP) as weather_time_stamp,
+    CAST(from_unixtime(CAST(weather_time_stamp/1000 AS BIGINT)) AS TIMESTAMP) as weather_time_stamp,
     temperature, wind_chill, humidity, pressure, 
     visibility, wind_dir, wind_speed, precipitation,
     weather_event, weather_conditions, 
