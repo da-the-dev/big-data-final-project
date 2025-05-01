@@ -3,10 +3,7 @@ DROP DATABASE IF EXISTS team26_projectdb CASCADE;
 CREATE DATABASE team26_projectdb LOCATION "project/hive/warehouse";
 USE team26_projectdb;
 
--- Set timestamp conversion properties
 SET hive.parquet.timestamp.skip.conversion=true;
-SET hive.parquet.timestamp.write.int96=true;
-SET parquet.timestamp.skip.conversion=true;
 
 -- Create external table for traffic data
 CREATE EXTERNAL TABLE traffic (
