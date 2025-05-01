@@ -15,15 +15,8 @@ sqoop import-all-tables \
   --password $password \
   --compression-codec=snappy \
   --compress \
-  --as-parquetfile \ # For analytical queries
+  --as-parquetfile \
   --warehouse-dir=project/warehouse \
   --m 4
-
-# only for avro
-# mv -f *.avsc output/
-# mv -f *.java output/
-
-# hdfs dfs -mkdir -p project/warehouse/avsc
-# hdfs dfs -put output/*.avsc project/warehouse/avsc
 
 echo "Data ingestion completed successfully!"
