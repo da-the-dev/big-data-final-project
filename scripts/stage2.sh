@@ -1,18 +1,51 @@
 #!/bin/bash
-
 password=$(head -n 1 secrets/.hive.pass)
 
-echo "Creating Hive database and tables..."
-beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team26 -p $password -f sql/db.hql > output/hive_results.txt 2> output/hive_errors.txt
+# Initialize database
+echo "Initializing database..."
+beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
+   -n team26 -p "$password" \
+   -f db.hql \
+   > output/db_init.log 2> output/db_init.err
 
-echo "Running EDA queries..."
-for i in {1..4}
-do
-   echo "Running query $i..."
-   beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 -n team26 -p $password -f sql/q$i.hql
+# Get list of states
+echo "Retrieving state list..."
+states=$(beeline --silent=true \
+   -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
+   -n team26 -p "$password" \
+   --outputformat=csv2 \
+   -e "USE team26_projectdb; SELECT state FROM states_list;" \
+   | grep -v "^state$" | tr -d '\r')
+
+# Process each state
+for state in $states; do
+   echo "Processing state: $state"
+   
+   beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
+      -n team26 -p "$password" \
+      --hivevar STATE="$state" \
+      -f load_state.hql \
+      > "output/${state}_load.log" 2> "output/${state}_load.err"
+      
+   if [ $? -ne 0 ]; then
+      echo "Error processing $state"
+      exit 1
+   fi
 done
 
-echo "Preparing data for visualization..."
-bash scripts/prepare_visualization.sh
+# Final cleanup
+echo "Performing final cleanup..."
+beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
+   -n team26 -p "$password" \
+   -f cleanup.hql \
+   > output/cleanup.log 2> output/cleanup.err
 
-echo "Stage 2 completed successfully!"
+echo "Running analytical queries..."
+for i in {1..4}; do
+   beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
+      -n team26 -p "$password" \
+      -f "sql/q$i.hql" \
+      > "output/q$i.log" 2> "output/q$i.err"
+done
+
+echo "Data processing completed successfully"
