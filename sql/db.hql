@@ -8,6 +8,8 @@ SET parquet.int64.timestamp.unit=MILLIS;
 SET hive.local.time.zone=UTC; 
 SET hive.exec.dynamic.partition=true;
 SET hive.exec.dynamic.partition.mode=nonstrict;
+SET hive.tez.bucket.pruning=true;
+hive.optimize.sort.dynamic.partition=true;
 
 CREATE EXTERNAL TABLE traffic (
   id STRING,
@@ -102,7 +104,7 @@ CREATE EXTERNAL TABLE traffic_partitioned (
     weather_conditions STRING
 )
 PARTITIONED BY (state STRING)
-CLUSTERED BY (city) INTO 32 BUCKETS
+CLUSTERED BY (city) INTO 4 BUCKETS
 STORED AS PARQUET
 LOCATION 'project/hive/warehouse/traffic_partitioned';
 
