@@ -17,7 +17,7 @@ SELECT
     AVG(delay_from_typical_traffic) AS avg_delay,
     COUNT(*) AS count
 FROM traffic_partitioned
-GROUP BY hour_of_day
+GROUP BY HOUR(start_time)
 ORDER BY hour_of_day;
 
 INSERT OVERWRITE DIRECTORY 'project/output/q3'
