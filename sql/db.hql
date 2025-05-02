@@ -122,3 +122,6 @@ SELECT
     visibility, wind_dir, wind_speed, precipitation,
     weather_event, weather_conditions, state
 FROM traffic_view;
+
+DROP TABLE traffic;
+DROP VIEW traffic_view;
