@@ -5,6 +5,7 @@ USE team26_projectdb;
 
 SET hive.parquet.timestamp.skip.conversion=true;
 SET parquet.int64.timestamp.unit=MILLIS;
+SET hive.local.time.zone=UTC; 
 
 -- Create external table for traffic data
 CREATE EXTERNAL TABLE traffic (
@@ -81,17 +82,17 @@ SET hive.exec.dynamic.partition=true;
 SET hive.exec.dynamic.partition.mode=nonstrict;
 
 INSERT OVERWRITE TABLE traffic_partitioned 
-PARTITION(severity)
+PARTITION(state)
 SELECT 
-    id, start_lat, start_lng, 
-    CAST(from_unixtime(CAST(start_time/1000 AS BIGINT)) AS TIMESTAMP) AS start_time,
-    CAST(from_unixtime(CAST(end_time/1000 AS BIGINT)) AS TIMESTAMP) as end_time,
+    id, severity, start_lat, start_lng, 
+    TIMESTAMP(from_unixtime(start_time/1000)) AS start_time,
+    TIMESTAMP(from_unixtime(end_time/1000)) AS end_time,
     distance, delay_from_typical_traffic, 
     delay_from_free_flow_speed, congestion_speed,
-    description, street, city, county, state,
+    description, street, city, county,
     zip_code, local_time_zone, 
     weather_station_airport_code, 
-    CAST(from_unixtime(CAST(weather_time_stamp/1000 AS BIGINT)) AS TIMESTAMP) as weather_time_stamp,
+    TIMESTAMP(from_unixtime(weather_time_stamp/1000)) AS weather_time_stamp,
     temperature, wind_chill, humidity, pressure, 
     visibility, wind_dir, wind_speed, precipitation,
     weather_event, weather_conditions, 

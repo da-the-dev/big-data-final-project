@@ -18,6 +18,8 @@ sqoop import-all-tables \
   --compress \
   --as-parquetfile \
   --warehouse-dir=project/warehouse \
-  --m 4
+  --m 4 \
+  -Dparquet.int64.timestamp.unit=MILLIS \
+  -Dhive.parquet.timestamp.skip.conversion=true \
 
 echo "Data ingestion completed successfully!"
