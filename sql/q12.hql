@@ -12,42 +12,36 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/q12';
 
--- общее кол-во строк
-WITH totals AS (
-    SELECT COUNT(*) AS total_rows FROM traffic_partitioned
-)
 INSERT INTO q12_results
-SELECT * FROM (
-    SELECT 'temperature'           AS column_name,
-           SUM(CASE WHEN temperature IS NULL THEN 1 ELSE 0 END) AS nulls,
-           t.total_rows                                           AS total,
-           SUM(CASE WHEN temperature IS NULL THEN 1 ELSE 0 END)/t.total_rows AS pct_nulls
-    FROM traffic_partitioned, totals t
-    UNION ALL
-    SELECT 'humidity',
-           SUM(CASE WHEN humidity IS NULL THEN 1 ELSE 0 END),
-           t.total_rows,
-           SUM(CASE WHEN humidity IS NULL THEN 1 ELSE 0 END)/t.total_rows
-    FROM traffic_partitioned, totals t
-    UNION ALL
-    SELECT 'pressure',
-           SUM(CASE WHEN pressure IS NULL THEN 1 ELSE 0 END),
-           t.total_rows,
-           SUM(CASE WHEN pressure IS NULL THEN 1 ELSE 0 END)/t.total_rows
-    FROM traffic_partitioned, totals t
-    UNION ALL
-    SELECT 'visibility',
-           SUM(CASE WHEN visibility IS NULL THEN 1 ELSE 0 END),
-           t.total_rows,
-           SUM(CASE WHEN visibility IS NULL THEN 1 ELSE 0 END)/t.total_rows
-    FROM traffic_partitioned, totals t
-    UNION ALL
-    SELECT 'wind_speed',
-           SUM(CASE WHEN wind_speed IS NULL THEN 1 ELSE 0 END),
-           t.total_rows,
-           SUM(CASE WHEN wind_speed IS NULL THEN 1 ELSE 0 END)/t.total_rows
-    FROM traffic_partitioned, totals t
-) x;
+SELECT 'temperature' AS column_name,
+       SUM(CASE WHEN temperature IS NULL THEN 1 ELSE 0 END)           AS nulls,
+       COUNT(*)                                                       AS total,
+       SUM(CASE WHEN temperature IS NULL THEN 1 ELSE 0 END)/COUNT(*)  AS pct_nulls
+FROM traffic_partitioned
+UNION ALL
+SELECT 'humidity',
+       SUM(CASE WHEN humidity IS NULL THEN 1 ELSE 0 END),
+       COUNT(*),
+       SUM(CASE WHEN humidity IS NULL THEN 1 ELSE 0 END)/COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'pressure',
+       SUM(CASE WHEN pressure IS NULL THEN 1 ELSE 0 END),
+       COUNT(*),
+       SUM(CASE WHEN pressure IS NULL THEN 1 ELSE 0 END)/COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'visibility',
+       SUM(CASE WHEN visibility IS NULL THEN 1 ELSE 0 END),
+       COUNT(*),
+       SUM(CASE WHEN visibility IS NULL THEN 1 ELSE 0 END)/COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'wind_speed',
+       SUM(CASE WHEN wind_speed IS NULL THEN 1 ELSE 0 END),
+       COUNT(*),
+       SUM(CASE WHEN wind_speed IS NULL THEN 1 ELSE 0 END)/COUNT(*)
+FROM traffic_partitioned;
 
 INSERT OVERWRITE DIRECTORY 'project/output/q12'
 ROW FORMAT DELIMITED
