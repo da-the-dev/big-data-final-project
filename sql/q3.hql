@@ -11,21 +11,12 @@ ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/q3';
 
--- Set timezone handling parameters
-SET hive.local.time.zone=UTC;
-SET hive.parquet.timestamp.skip.conversion=true;
-
 INSERT INTO q3_results
 SELECT 
-    HOUR(
-        from_utc_timestamp(
-            from_unixtime(start_time/1000), 
-            local_time_zone
-        )
-    ) AS hour_of_day,
+    HOUR(start_time) AS hour_of_day,
     AVG(delay_from_typical_traffic) AS avg_delay,
     COUNT(*) AS count
-FROM traffic
+FROM traffic_view
 GROUP BY hour_of_day
 ORDER BY hour_of_day;
 

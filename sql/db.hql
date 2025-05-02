@@ -6,8 +6,9 @@ USE team26_projectdb;
 SET hive.parquet.timestamp.skip.conversion=true;
 SET parquet.int64.timestamp.unit=MILLIS;
 SET hive.local.time.zone=UTC; 
+SET hive.exec.dynamic.partition=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
 
--- Create external table for traffic data
 CREATE EXTERNAL TABLE traffic (
   id STRING,
   severity INT,
@@ -42,6 +43,31 @@ CREATE EXTERNAL TABLE traffic (
 )
 STORED AS PARQUET
 LOCATION 'project/warehouse/traffic';
+
+CREATE VIEW traffic_view AS
+SELECT 
+    id, severity, start_lat, start_lng, 
+    from_utc_timestamp(
+        from_unixtime(CAST(start_time/1000 AS BIGINT)), 
+        CASE WHEN local_time_zone IS NULL OR local_time_zone = '' THEN 'UTC' ELSE local_time_zone END
+    ) AS start_time,
+    from_utc_timestamp(
+        from_unixtime(CAST(end_time/1000 AS BIGINT)), 
+        CASE WHEN local_time_zone IS NULL OR local_time_zone = '' THEN 'UTC' ELSE local_time_zone END
+    ) AS end_time,
+    distance, delay_from_typical_traffic, 
+    delay_from_free_flow_speed, congestion_speed,
+    description, street, city, county, state,
+    country, zip_code, local_time_zone, 
+    weather_station_airport_code, 
+    from_utc_timestamp(
+        from_unixtime(CAST(weather_time_stamp/1000 AS BIGINT)), 
+        CASE WHEN local_time_zone IS NULL OR local_time_zone = '' THEN 'UTC' ELSE local_time_zone END
+    ) AS weather_time_stamp,
+    temperature, wind_chill, humidity, pressure, 
+    visibility, wind_dir, wind_speed, precipitation,
+    weather_event, weather_conditions
+FROM traffic;
 
 
 CREATE EXTERNAL TABLE traffic_partitioned (
@@ -80,22 +106,17 @@ CLUSTERED BY (city) INTO 32 BUCKETS
 STORED AS PARQUET
 LOCATION 'project/hive/warehouse/traffic_partitioned';
 
-SET hive.exec.dynamic.partition=true;
-SET hive.exec.dynamic.partition.mode=nonstrict;
-
 INSERT OVERWRITE TABLE traffic_partitioned 
 PARTITION(state)
 SELECT 
     id, severity, start_lat, start_lng, 
-    TIMESTAMP(from_unixtime(start_time/1000)) AS start_time,
-    TIMESTAMP(from_unixtime(end_time/1000)) AS end_time,
+    start_time, end_time,
     distance, delay_from_typical_traffic, 
     delay_from_free_flow_speed, congestion_speed,
     description, street, city, county,
     country, zip_code, local_time_zone, 
-    weather_station_airport_code, 
-    TIMESTAMP(from_unixtime(weather_time_stamp/1000)) AS weather_time_stamp,
+    weather_station_airport_code, weather_time_stamp,
     temperature, wind_chill, humidity, pressure, 
     visibility, wind_dir, wind_speed, precipitation,
     weather_event, weather_conditions
-FROM traffic;
+FROM traffic_view;
