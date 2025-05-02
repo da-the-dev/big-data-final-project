@@ -48,4 +48,7 @@ for i in {1..4}; do
       > "output/q$i.log" 2> "output/q$i.err"
 done
 
+echo "Saving results..."
+bash scripts/prepare_visualization.sh
+
 echo "Data processing completed successfully"
