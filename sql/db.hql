@@ -118,5 +118,5 @@ SELECT
     weather_station_airport_code, weather_time_stamp,
     temperature, wind_chill, humidity, pressure, 
     visibility, wind_dir, wind_speed, precipitation,
-    weather_event, weather_conditions
+    weather_event, weather_conditions, state
 FROM traffic_view;
