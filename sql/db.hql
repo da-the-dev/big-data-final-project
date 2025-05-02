@@ -59,6 +59,7 @@ CREATE EXTERNAL TABLE traffic_partitioned (
     street STRING,
     city STRING,
     county STRING,
+    country STRING,
     zip_code STRING,
     local_time_zone STRING,
     weather_station_airport_code STRING,
@@ -91,11 +92,10 @@ SELECT
     distance, delay_from_typical_traffic, 
     delay_from_free_flow_speed, congestion_speed,
     description, street, city, county,
-    zip_code, local_time_zone, 
+    country, zip_code, local_time_zone, 
     weather_station_airport_code, 
     TIMESTAMP(from_unixtime(weather_time_stamp/1000)) AS weather_time_stamp,
     temperature, wind_chill, humidity, pressure, 
     visibility, wind_dir, wind_speed, precipitation,
-    weather_event, weather_conditions, 
-    severity
+    weather_event, weather_conditions
 FROM traffic;
