@@ -41,7 +41,7 @@ password=$(head -n 1 secrets/.hive.pass)
 #    > output/cleanup.log 2> output/cleanup.err
 
 echo "Running analytical queries..."
-for i in {1..4}; do
+for i in {1..15}; do
    beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
       -n team26 -p "$password" \
       -f "sql/q$i.hql" \
