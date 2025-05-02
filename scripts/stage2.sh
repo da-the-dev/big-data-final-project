@@ -5,7 +5,7 @@ password=$(head -n 1 secrets/.hive.pass)
 echo "Initializing database..."
 beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
    -n team26 -p "$password" \
-   -f db.hql \
+   -f sql/db.hql \
    > output/db_init.log 2> output/db_init.err
 
 # Get list of states
@@ -24,7 +24,7 @@ for state in $states; do
    beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
       -n team26 -p "$password" \
       --hivevar STATE="$state" \
-      -f load_state.hql \
+      -f sql/load_state.hql \
       > "output/${state}_load.log" 2> "output/${state}_load.err"
       
    if [ $? -ne 0 ]; then
@@ -37,7 +37,7 @@ done
 echo "Performing final cleanup..."
 beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
    -n team26 -p "$password" \
-   -f cleanup.hql \
+   -f sql/cleanup.hql \
    > output/cleanup.log 2> output/cleanup.err
 
 echo "Running analytical queries..."
