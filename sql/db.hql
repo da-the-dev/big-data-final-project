@@ -9,7 +9,7 @@ SET hive.local.time.zone=UTC;
 SET hive.exec.dynamic.partition=true;
 SET hive.exec.dynamic.partition.mode=nonstrict;
 SET hive.tez.bucket.pruning=true;
-hive.optimize.sort.dynamic.partition=true;
+SET hive.optimize.sort.dynamic.partition=true;
 
 CREATE EXTERNAL TABLE traffic (
   id STRING,
