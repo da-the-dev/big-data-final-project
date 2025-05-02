@@ -13,85 +13,83 @@ FIELDS TERMINATED BY ','
 LOCATION 'project/hive/warehouse/q12';
 
 INSERT INTO q12_results
-SELECT * FROM (
-    SELECT 'start_time',                      SUM(CASE WHEN start_time IS NULL THEN 1 END),                      COUNT(*), SUM(CASE WHEN start_time IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'end_time',                        SUM(CASE WHEN end_time IS NULL THEN 1 END),                        COUNT(*), SUM(CASE WHEN end_time IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'distance',                        SUM(CASE WHEN distance IS NULL THEN 1 END),                        COUNT(*), SUM(CASE WHEN distance IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'delay_from_typical_traffic',      SUM(CASE WHEN delay_from_typical_traffic IS NULL THEN 1 END),      COUNT(*), SUM(CASE WHEN delay_from_typical_traffic IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'delay_from_free_flow_speed',      SUM(CASE WHEN delay_from_free_flow_speed IS NULL THEN 1 END),      COUNT(*), SUM(CASE WHEN delay_from_free_flow_speed IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'congestion_speed',                SUM(CASE WHEN congestion_speed IS NULL THEN 1 END),                COUNT(*), SUM(CASE WHEN congestion_speed IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'description',                     SUM(CASE WHEN description IS NULL THEN 1 END),                     COUNT(*), SUM(CASE WHEN description IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'street',                          SUM(CASE WHEN street IS NULL THEN 1 END),                          COUNT(*), SUM(CASE WHEN street IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'city',                            SUM(CASE WHEN city IS NULL THEN 1 END),                            COUNT(*), SUM(CASE WHEN city IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'county',                          SUM(CASE WHEN county IS NULL THEN 1 END),                          COUNT(*), SUM(CASE WHEN county IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'state',                           SUM(CASE WHEN state IS NULL THEN 1 END),                           COUNT(*), SUM(CASE WHEN state IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'country',                         SUM(CASE WHEN country IS NULL THEN 1 END),                         COUNT(*), SUM(CASE WHEN country IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'zip_code',                        SUM(CASE WHEN zip_code IS NULL THEN 1 END),                        COUNT(*), SUM(CASE WHEN zip_code IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'local_time_zone',                 SUM(CASE WHEN local_time_zone IS NULL THEN 1 END),                 COUNT(*), SUM(CASE WHEN local_time_zone IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'weather_station_airport_code',    SUM(CASE WHEN weather_station_airport_code IS NULL THEN 1 END),    COUNT(*), SUM(CASE WHEN weather_station_airport_code IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'weather_time_stamp',              SUM(CASE WHEN weather_time_stamp IS NULL THEN 1 END),              COUNT(*), SUM(CASE WHEN weather_time_stamp IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'temperature',                     SUM(CASE WHEN temperature IS NULL THEN 1 END),                     COUNT(*), SUM(CASE WHEN temperature IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'wind_chill',                      SUM(CASE WHEN wind_chill IS NULL THEN 1 END),                      COUNT(*), SUM(CASE WHEN wind_chill IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'humidity',                        SUM(CASE WHEN humidity IS NULL THEN 1 END),                        COUNT(*), SUM(CASE WHEN humidity IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'pressure',                        SUM(CASE WHEN pressure IS NULL THEN 1 END),                        COUNT(*), SUM(CASE WHEN pressure IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'visibility',                      SUM(CASE WHEN visibility IS NULL THEN 1 END),                      COUNT(*), SUM(CASE WHEN visibility IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'wind_dir',                        SUM(CASE WHEN wind_dir IS NULL THEN 1 END),                        COUNT(*), SUM(CASE WHEN wind_dir IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'wind_speed',                      SUM(CASE WHEN wind_speed IS NULL THEN 1 END),                      COUNT(*), SUM(CASE WHEN wind_speed IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'precipitation',                   SUM(CASE WHEN precipitation IS NULL THEN 1 END),                   COUNT(*), SUM(CASE WHEN precipitation IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'weather_event',                   SUM(CASE WHEN weather_event IS NULL THEN 1 END),                   COUNT(*), SUM(CASE WHEN weather_event IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-    UNION ALL
-    SELECT 'weather_conditions',              SUM(CASE WHEN weather_conditions IS NULL THEN 1 END),              COUNT(*), SUM(CASE WHEN weather_conditions IS NULL THEN 1 END)/COUNT(*)
-    FROM traffic_partitioned
-) x;
+SELECT 'start_time', COUNT(*) - COUNT(start_time), COUNT(*), (COUNT(*) - COUNT(start_time)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'end_time', COUNT(*) - COUNT(end_time), COUNT(*), (COUNT(*) - COUNT(end_time)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'distance', COUNT(*) - COUNT(distance), COUNT(*), (COUNT(*) - COUNT(distance)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'delay_from_typical_traffic', COUNT(*) - COUNT(delay_from_typical_traffic), COUNT(*), (COUNT(*) - COUNT(delay_from_typical_traffic)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'delay_from_free_flow_speed', COUNT(*) - COUNT(delay_from_free_flow_speed), COUNT(*), (COUNT(*) - COUNT(delay_from_free_flow_speed)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'congestion_speed', COUNT(*) - COUNT(congestion_speed), COUNT(*), (COUNT(*) - COUNT(congestion_speed)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'description', COUNT(*) - COUNT(description), COUNT(*), (COUNT(*) - COUNT(description)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'street', COUNT(*) - COUNT(street), COUNT(*), (COUNT(*) - COUNT(street)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'city', COUNT(*) - COUNT(city), COUNT(*), (COUNT(*) - COUNT(city)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'county', COUNT(*) - COUNT(county), COUNT(*), (COUNT(*) - COUNT(county)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'state', COUNT(*) - COUNT(state), COUNT(*), (COUNT(*) - COUNT(state)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'country', COUNT(*) - COUNT(country), COUNT(*), (COUNT(*) - COUNT(country)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'zip_code', COUNT(*) - COUNT(zip_code), COUNT(*), (COUNT(*) - COUNT(zip_code)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'local_time_zone', COUNT(*) - COUNT(local_time_zone), COUNT(*), (COUNT(*) - COUNT(local_time_zone)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'weather_station_airport_code', COUNT(*) - COUNT(weather_station_airport_code), COUNT(*), (COUNT(*) - COUNT(weather_station_airport_code)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'weather_time_stamp', COUNT(*) - COUNT(weather_time_stamp), COUNT(*), (COUNT(*) - COUNT(weather_time_stamp)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'temperature', COUNT(*) - COUNT(temperature), COUNT(*), (COUNT(*) - COUNT(temperature)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'wind_chill', COUNT(*) - COUNT(wind_chill), COUNT(*), (COUNT(*) - COUNT(wind_chill)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'humidity', COUNT(*) - COUNT(humidity), COUNT(*), (COUNT(*) - COUNT(humidity)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'pressure', COUNT(*) - COUNT(pressure), COUNT(*), (COUNT(*) - COUNT(pressure)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'visibility', COUNT(*) - COUNT(visibility), COUNT(*), (COUNT(*) - COUNT(visibility)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'wind_dir', COUNT(*) - COUNT(wind_dir), COUNT(*), (COUNT(*) - COUNT(wind_dir)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'wind_speed', COUNT(*) - COUNT(wind_speed), COUNT(*), (COUNT(*) - COUNT(wind_speed)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'precipitation', COUNT(*) - COUNT(precipitation), COUNT(*), (COUNT(*) - COUNT(precipitation)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'weather_event', COUNT(*) - COUNT(weather_event), COUNT(*), (COUNT(*) - COUNT(weather_event)) / COUNT(*)
+FROM traffic_partitioned
+UNION ALL
+SELECT 'weather_conditions', COUNT(*) - COUNT(weather_conditions), COUNT(*), (COUNT(*) - COUNT(weather_conditions)) / COUNT(*)
+FROM traffic_partitioned;
 
 INSERT OVERWRITE DIRECTORY 'project/output/q12'
 ROW FORMAT DELIMITED
