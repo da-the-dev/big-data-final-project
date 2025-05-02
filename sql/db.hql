@@ -46,6 +46,7 @@ LOCATION 'project/warehouse/traffic';
 
 CREATE EXTERNAL TABLE traffic_partitioned (
     id STRING,
+    severity INT,
     start_lat DOUBLE,
     start_lng DOUBLE,
     start_time TIMESTAMP,
@@ -58,7 +59,6 @@ CREATE EXTERNAL TABLE traffic_partitioned (
     street STRING,
     city STRING,
     county STRING,
-    state STRING,
     zip_code STRING,
     local_time_zone STRING,
     weather_station_airport_code STRING,
