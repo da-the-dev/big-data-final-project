@@ -16,7 +16,7 @@ SELECT
     severity,
     AVG(delay_from_typical_traffic) AS avg_delay,
     COUNT(*) AS count
-FROM traffic
+FROM traffic_partitioned
 GROUP BY severity
 ORDER BY severity;
 

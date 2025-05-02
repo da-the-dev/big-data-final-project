@@ -18,7 +18,7 @@ SELECT
     city,
     AVG(delay_from_typical_traffic) AS avg_delay,
     COUNT(*) AS count
-FROM traffic
+FROM traffic_partitioned
 WHERE city IS NOT NULL AND city != ''
 GROUP BY state, city
 HAVING COUNT(*) > 100
