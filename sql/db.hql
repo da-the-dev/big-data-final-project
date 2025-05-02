@@ -74,8 +74,8 @@ CREATE EXTERNAL TABLE traffic_partitioned (
     weather_event STRING,
     weather_conditions STRING
 )
-PARTITIONED BY (state STRIGN)
-CLUSTER BY (city) INTO 32 BUCKETS
+PARTITIONED BY (state STRING)
+CLUSTERED BY (city) INTO 32 BUCKETS
 STORED AS PARQUET
 LOCATION 'project/hive/warehouse/traffic_partitioned';
 
