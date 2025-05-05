@@ -19,6 +19,7 @@ SELECT
     AVG(delay_from_typical_traffic) AS avg_delay,
     COUNT(*) AS count
 FROM traffic_partitioned
+WHERE start_time IS NOT NULL
 GROUP BY YEAR(start_time), MONTH(start_time)
 ORDER BY year, month;
 

@@ -17,6 +17,7 @@ SELECT
     state,
     AVG(delay_from_typical_traffic) AS avg_delay
 FROM traffic_partitioned
+WHERE start_time IS NOT NULL AND state IS NOT NULL
 GROUP BY YEAR(start_time), state
 ORDER BY year, avg_delay DESC;
 
