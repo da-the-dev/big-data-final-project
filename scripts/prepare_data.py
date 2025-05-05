@@ -410,3 +410,5 @@ test_data.select("features", "delay_from_typical_traffic")\
     .mode("overwrite")\
     .format("json")\
     .save("project/data/test")
+
+spark.stop()

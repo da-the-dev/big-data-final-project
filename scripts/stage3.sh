@@ -2,14 +2,33 @@
 export HADOOP_CONF_DIR=/etc/hadoop/conf
 export YARN_CONF_DIR=/etc/hadoop/conf
 
-echo "Creating train/test sets..."
+echo "Cleaning up previous data..."
+# Remove existing data and models
+hdfs dfs -rm -r -skipTrash project/data/train || true
+hdfs dfs -rm -r -skipTrash project/data/test || true
+hdfs dfs -rm -r -skipTrash project/models/model1 || true
+hdfs dfs -rm -r -skipTrash project/models/model2 || true
+hdfs dfs -rm -r -skipTrash project/output/model1_predictions || true
+hdfs dfs -rm -r -skipTrash project/output/model2_predictions || true
+hdfs dfs -rm -r -skipTrash project/output/evaluation || true
 
-hdfs dfs -rm -r -skipTrash project/data/train || true 
-hdfs dfs -rm -r -skipTrash project/data/test || true 
-rm -f data/train.json
-rm -f data/test.json
+# Clean local directories
+rm -rf data/train.json data/test.json
+rm -rf models/model1 models/model2
+rm -rf output/model1_predictions output/model2_predictions output/evaluation
 
+echo "Running data preparation pipeline..."
 spark-submit --master yarn scripts/prepare_data.py
 
+echo "Training ML models..."
+spark-submit --master yarn scripts/train_model.py
+
+echo "Exporting results..."
 hdfs dfs -getmerge project/data/train data/train.json
 hdfs dfs -getmerge project/data/test data/test.json
+
+hdfs dfs -getmerge project/output/model1_predictions output/model1_predictions.csv
+hdfs dfs -getmerge project/output/model2_predictions output/model2_predictions.csv
+hdfs dfs -getmerge project/output/evaluation output/evaluation.csv
+
+echo "Pipeline execution completed successfully."
