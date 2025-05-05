@@ -4,8 +4,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     weather_conditions STRING,
-    avg_delay DOUBLE,
-    count BIGINT
+    delay_from_typical_traffic DOUBLE,
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -14,12 +13,9 @@ LOCATION '${hivevar:WAREHOUSE_PATH}';
 INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT 
     weather_conditions,
-    AVG(delay_from_typical_traffic) AS avg_delay,
-    COUNT(*) AS count
+    delay_from_typical_traffic,
 FROM traffic_partitioned
-WHERE weather_conditions IS NOT NULL AND weather_conditions <> ''
-GROUP BY weather_conditions
-ORDER BY avg_delay DESC;
+WHERE weather_conditions IS NOT NULL AND weather_conditions <> '';
 
 INSERT OVERWRITE DIRECTORY '${hivevar:OUTPUT_PATH}'
 ROW FORMAT DELIMITED

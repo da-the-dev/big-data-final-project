@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "year,month,avg_delay,count" > $1
+echo "year,month,delay_from_typical_traffic" > $1

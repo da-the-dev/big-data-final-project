@@ -4,8 +4,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     visibility_bucket STRING,
-    avg_delay DOUBLE,
-    count BIGINT
+    delay_from_typical_traffic DOUBLE,
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -19,17 +18,9 @@ SELECT
         WHEN visibility >= 3 AND visibility < 5 THEN '3–5 mi'
         ELSE '>5 mi'
     END AS visibility_bucket,
-    AVG(delay_from_typical_traffic) AS avg_delay,
-    COUNT(*) AS count
+    delay_from_typical_traffic,
 FROM traffic_partitioned
-WHERE visibility IS NOT NULL
-GROUP BY CASE
-    WHEN visibility < 1 THEN '<1 mi'
-    WHEN visibility >= 1 AND visibility < 3 THEN '1–3 mi'
-    WHEN visibility >= 3 AND visibility < 5 THEN '3–5 mi'
-    ELSE '>5 mi'
-END
-ORDER BY avg_delay DESC;
+WHERE visibility IS NOT NULL;
 
 INSERT OVERWRITE DIRECTORY '${hivevar:OUTPUT_PATH}'
 ROW FORMAT DELIMITED

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "severity,avg_delay,count" > $1
+echo "severity,delay_from_typical_traffic" > $1

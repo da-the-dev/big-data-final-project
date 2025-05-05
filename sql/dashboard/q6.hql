@@ -5,8 +5,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     year INT,
     month INT,
-    avg_delay DOUBLE,
-    count BIGINT
+    delay_from_typical_traffic DOUBLE,
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -16,12 +15,9 @@ INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT
     YEAR(start_time) AS year,
     MONTH(start_time) AS month,
-    AVG(delay_from_typical_traffic) AS avg_delay,
-    COUNT(*) AS count
+    delay_from_typical_traffic,
 FROM traffic_partitioned
-WHERE start_time IS NOT NULL
-GROUP BY YEAR(start_time), MONTH(start_time)
-ORDER BY year, month;
+WHERE start_time IS NOT NULL;
 
 INSERT OVERWRITE DIRECTORY '${hivevar:OUTPUT_PATH}'
 ROW FORMAT DELIMITED

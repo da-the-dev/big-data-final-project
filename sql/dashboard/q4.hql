@@ -5,8 +5,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     state STRING,
     city STRING,
-    avg_delay DOUBLE,
-    count BIGINT
+    delay_from_typical_traffic DOUBLE,
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -16,14 +15,9 @@ INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT 
     state,
     city,
-    AVG(delay_from_typical_traffic) AS avg_delay,
-    COUNT(*) AS count
+    delay_from_typical_traffic,
 FROM traffic_partitioned
-WHERE city IS NOT NULL AND city <> ''
-GROUP BY state, city
-HAVING COUNT(*) > 100
-ORDER BY avg_delay DESC
-LIMIT 20;
+WHERE city IS NOT NULL AND city <> '';
 
 INSERT OVERWRITE DIRECTORY '${hivevar:OUTPUT_PATH}'
 ROW FORMAT DELIMITED

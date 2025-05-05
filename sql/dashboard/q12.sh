@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "lat_bucket,lng_bucket,avg_delay,count" > $1
+echo "delay_from_typical_traffic,distance,precipitation,temperature,humidity" > $1

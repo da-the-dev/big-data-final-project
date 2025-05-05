@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "weather_event,severe_count,total_count,share_severe" > $1
+echo "lat_bucket,lng_bucket,delay_from_typical_traffic" > $1
