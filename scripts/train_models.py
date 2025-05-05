@@ -2,6 +2,8 @@ from pyspark.sql import SparkSession
 from pyspark.ml.regression import RandomForestRegressor, LinearRegression
 from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
 from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.ml.linalg import VectorUDT
+from pyspark.sql.types import StructType, StructField, DoubleType
 
 team = "team26"
 warehouse = "project/hive/warehouse"
@@ -16,8 +18,18 @@ spark = SparkSession.builder\
         .enableHiveSupport()\
         .getOrCreate()
 
-train_data = spark.read.format("json").load("project/data/train")
-test_data = spark.read.format("json").load("project/data/test")
+train_schema = StructType([
+    StructField("features", VectorUDT()),
+    StructField("delay_from_typical_traffic", DoubleType())
+])
+
+test_schema = StructType([
+    StructField("features", VectorUDT()),
+    StructField("delay_from_typical_traffic", DoubleType())
+])
+
+train_data = spark.read.schema(train_schema).json("project/data/train")
+test_data = spark.read.schema(test_schema).json("project/data/test")
 
 label_col = "delay_from_typical_traffic"
 feature_col = "features"
