@@ -21,6 +21,8 @@ spark = SparkSession.builder\
         .master("yarn")\
         .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")\
         .config("spark.sql.warehouse.dir", warehouse)\
+        .config("spark.sql.adaptive.enabled", "true") \
+        .config("spark.sql.inMemoryColumnarStorage.batchSize", 100) \
         .enableHiveSupport()\
         .getOrCreate()
 
@@ -81,50 +83,22 @@ class GeoToECEF(Transformer, HasInputCols, HasOutputCol, DefaultParamsReadable, 
         b = 6356752.3142  # semi-minor axis
         f = (a - b) / a  # flattening
         e_sq = f * (2 - f)  # eccentricity squared
+        
+        lat_rad = F.radians(F.col(inputCols[0]))
+        lon_rad = F.radians(F.col(inputCols[1]))
 
-        # UDF for geodetic to ECEF conversion
-        def geodetic_to_ecef(lat, lon, alt=0):
-            if lat is None or lon is None:
-                return (None, None, None)
-
-            # Default altitude to 0 if None
-            if alt is None:
-                alt = 0
-
-            lat_rad = math.radians(lat)
-            lon_rad = math.radians(lon)
-
-            # Prime vertical radius of curvature
-            N = a / math.sqrt(1 - e_sq * math.sin(lat_rad) ** 2)
-
-            # Calculate ECEF coordinates
-            x = (N + alt) * math.cos(lat_rad) * math.cos(lon_rad)
-            y = (N + alt) * math.cos(lat_rad) * math.sin(lon_rad)
-            z = (N * (1 - e_sq) + alt) * math.sin(lat_rad)
-
-            return (x, y, z)
-
-        # Register UDF
-        geodetic_to_ecef_udf = F.udf(geodetic_to_ecef, StructType([
-            StructField("x", DoubleType(), True),
-            StructField("y", DoubleType(), True),
-            StructField("z", DoubleType(), True)
-        ]))
-
-        # Apply transformation based on number of input columns
-        if len(inputCols) == 2:  # lat, lon only
-            lat_col, lon_col = inputCols
-            ecef_col = geodetic_to_ecef_udf(F.col(lat_col), F.col(lon_col))
-        elif len(inputCols) == 3:  # lat, lon, alt
-            lat_col, lon_col, alt_col = inputCols
-            ecef_col = geodetic_to_ecef_udf(F.col(lat_col), F.col(lon_col), F.col(alt_col))
+        N = a / F.sqrt(1 - e_sq * F.pow(F.sin(lat_rad), 2))
+        if len(inputCols) == 3:
+            alt = F.col(inputCols[2])
+            return dataset \
+                .withColumn(f"{outputCol}_x", (N + alt) * F.cos(lat_rad) * F.cos(lon_rad)) \
+                .withColumn(f"{outputCol}_y", (N + alt) * F.cos(lat_rad) * F.sin(lon_rad)) \
+                .withColumn(f"{outputCol}_z", (N * (1 - e_sq) + alt) * F.sin(lat_rad))
         else:
-            raise ValueError("inputCols should contain either 2 columns (lat, lon) or 3 columns (lat, lon, alt)")
-
-        return dataset \
-            .withColumn(f"{outputCol}_x", ecef_col.getItem("x")) \
-            .withColumn(f"{outputCol}_y", ecef_col.getItem("y")) \
-            .withColumn(f"{outputCol}_z", ecef_col.getItem("z"))
+            return dataset \
+                .withColumn(f"{outputCol}_x", N * F.cos(lat_rad) * F.cos(lon_rad)) \
+                .withColumn(f"{outputCol}_y", N * F.cos(lat_rad) * F.sin(lon_rad)) \
+                .withColumn(f"{outputCol}_z", (N * (1 - e_sq)) * F.sin(lat_rad))
 
 
 class TimeDeltaTransformer(Transformer, HasInputCols, HasOutputCol):
@@ -189,7 +163,7 @@ class NAIndicator(Transformer, HasInputCol, HasOutputCol, DefaultParamsReadable,
 
         return dataset.withColumn(
             output_col,
-            F.when(F.col(input_col).isNull(), 1.0).otherwise(0.0)
+            F.col(input_col).isNull().cast("byte")
         )
 
 columns_to_drop = [
@@ -265,7 +239,7 @@ for col in ultra_high_cardinality_cols:
         FeatureHasher(
             inputCols=[col],
             outputCol=f"{col}_hash",
-            numFeatures=128,
+            numFeatures=32,
             categoricalCols=[col]
         )
     )
