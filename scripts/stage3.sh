@@ -11,5 +11,5 @@ rm -f data/test.json
 
 spark-submit --master yarn scripts/prepare_data.py
 
-hdfs dfs -cat project/data/train/*.json > data/train.json
-hdfs dfs -cat project/data/test/*.json > data/test.json
+hdfs dfs -getmerge project/data/train data/train.json
+hdfs dfs -getmerge project/data/test data/test.json
