@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     year INT,
     month INT,
-    delay_from_typical_traffic DOUBLE,
+    delay_from_typical_traffic DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -15,7 +15,7 @@ INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT
     YEAR(start_time) AS year,
     MONTH(start_time) AS month,
-    delay_from_typical_traffic,
+    delay_from_typical_traffic
 FROM traffic_partitioned
 WHERE start_time IS NOT NULL;
 

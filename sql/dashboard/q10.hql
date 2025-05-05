@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     severity INT,
     duration DOUBLE,
-    delay_from_typical_traffic DOUBLE,
+    delay_from_typical_traffic DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -15,7 +15,7 @@ INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT
     severity,
     (unix_timestamp(end_time) - unix_timestamp(start_time)) / 60.0 AS duration,
-    delay_from_typical_traffic,
+    delay_from_typical_traffic
 FROM traffic_partitioned
 WHERE end_time IS NOT NULL AND start_time IS NOT NULL;
 

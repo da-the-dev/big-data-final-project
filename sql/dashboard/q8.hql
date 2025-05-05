@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     visibility_bucket STRING,
-    delay_from_typical_traffic DOUBLE,
+    delay_from_typical_traffic DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -18,7 +18,7 @@ SELECT
         WHEN visibility >= 3 AND visibility < 5 THEN '3–5 mi'
         ELSE '>5 mi'
     END AS visibility_bucket,
-    delay_from_typical_traffic,
+    delay_from_typical_traffic
 FROM traffic_partitioned
 WHERE visibility IS NOT NULL;
 

@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     weather_conditions STRING,
-    delay_from_typical_traffic DOUBLE,
+    delay_from_typical_traffic DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -13,7 +13,7 @@ LOCATION '${hivevar:WAREHOUSE_PATH}';
 INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT 
     weather_conditions,
-    delay_from_typical_traffic,
+    delay_from_typical_traffic
 FROM traffic_partitioned
 WHERE weather_conditions IS NOT NULL AND weather_conditions <> '';
 

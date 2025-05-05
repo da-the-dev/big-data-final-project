@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     distance_bucket STRING,
-    delay_from_typical_traffic DOUBLE,
+    delay_from_typical_traffic DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -18,7 +18,7 @@ SELECT
         WHEN distance >= 1 AND distance < 3 THEN '1–3 mi'
         ELSE '>3 mi'
     END AS distance_bucket,
-    delay_from_typical_traffic,
+    delay_from_typical_traffic
 FROM traffic_partitioned
 WHERE distance IS NOT NULL;
 

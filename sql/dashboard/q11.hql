@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     lat_bucket DOUBLE,
     lng_bucket DOUBLE,
-    delay_from_typical_traffic DOUBLE,
+    delay_from_typical_traffic DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -15,7 +15,7 @@ INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT
     FLOOR(start_lat * 10) / 10.0 AS lat_bucket,
     FLOOR(start_lng * 10) / 10.0 AS lng_bucket,
-    delay_from_typical_traffic,
+    delay_from_typical_traffic
 FROM traffic_partitioned;
 
 INSERT OVERWRITE DIRECTORY '${hivevar:OUTPUT_PATH}'
