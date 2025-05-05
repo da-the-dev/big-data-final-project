@@ -35,7 +35,6 @@ for hql_path in "${DASHBOARD_QUERIES}"/*.hql; do
         --hivevar WAREHOUSE_PATH="${warehouse_path}" \
         -f "${hql_path}" >"${log_path}" 2>"${err_path}"
 
-    RESULT_TABLE="${result_table}" bash "${sh_path}" "${csv_path}" >>"${log_path}" 2>>"${err_path}"
-
-    hdfs dfs -cat "${hdfs_output}"/* >>"${csv_path}" 2>>"${err_path}"
+    # RESULT_TABLE="${result_table}" bash "${sh_path}" "${csv_path}" >>"${log_path}" 2>>"${err_path}"
+    # hdfs dfs -cat "${hdfs_output}"/* >>"${csv_path}" 2>>"${err_path}"
 done
