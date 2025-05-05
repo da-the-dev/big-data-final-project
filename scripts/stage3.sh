@@ -21,7 +21,7 @@ echo "Running data preparation pipeline..."
 spark-submit --master yarn scripts/prepare_data.py
 
 echo "Training ML models..."
-spark-submit --master yarn scripts/train_model.py
+spark-submit --master yarn scripts/train_models.py
 
 echo "Exporting results..."
 hdfs dfs -getmerge project/data/train data/train.json
