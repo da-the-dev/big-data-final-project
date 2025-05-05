@@ -20,91 +20,91 @@ SELECT
     IF(t.total = 0, 0.0, q.nulls / t.total) AS pct_nulls
 FROM (
     SELECT 'delay_from_typical_traffic' AS column_name,
-           COUNT(*) FILTER (WHERE delay_from_typical_traffic IS NULL) AS nulls
+           SUM(CASE WHEN delay_from_typical_traffic IS NULL THEN 1 ELSE 0 END) AS nulls
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'delay_from_free_flow_speed',
-           COUNT(*) FILTER (WHERE delay_from_free_flow_speed IS NULL)
+           SUM(CASE WHEN delay_from_free_flow_speed IS NULL THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'congestion_speed',
-           COUNT(*) FILTER (WHERE congestion_speed IS NULL OR congestion_speed = '')
+           SUM(CASE WHEN congestion_speed IS NULL OR congestion_speed = '' THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'temperature',
-           COUNT(*) FILTER (WHERE temperature IS NULL)
+           SUM(CASE WHEN temperature IS NULL THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'wind_chill',
-           COUNT(*) FILTER (WHERE wind_chill IS NULL)
+           SUM(CASE WHEN wind_chill IS NULL THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'humidity',
-           COUNT(*) FILTER (WHERE humidity IS NULL)
+           SUM(CASE WHEN humidity IS NULL THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'pressure',
-           COUNT(*) FILTER (WHERE pressure IS NULL)
+           SUM(CASE WHEN pressure IS NULL THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'visibility',
-           COUNT(*) FILTER (WHERE visibility IS NULL)
+           SUM(CASE WHEN visibility IS NULL THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'wind_speed',
-           COUNT(*) FILTER (WHERE wind_speed IS NULL)
+           SUM(CASE WHEN wind_speed IS NULL THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'precipitation',
-           COUNT(*) FILTER (WHERE precipitation IS NULL)
+           SUM(CASE WHEN precipitation IS NULL THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'weather_time_stamp',
-           COUNT(*) FILTER (WHERE weather_time_stamp IS NULL)
+           SUM(CASE WHEN weather_time_stamp IS NULL THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'weather_event',
-           COUNT(*) FILTER (WHERE weather_event IS NULL OR weather_event = '')
+           SUM(CASE WHEN weather_event IS NULL OR weather_event = '' THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'weather_conditions',
-           COUNT(*) FILTER (WHERE weather_conditions IS NULL OR weather_conditions = '')
+           SUM(CASE WHEN weather_conditions IS NULL OR weather_conditions = '' THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'local_time_zone',
-           COUNT(*) FILTER (WHERE local_time_zone IS NULL OR local_time_zone = '')
+           SUM(CASE WHEN local_time_zone IS NULL OR local_time_zone = '' THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 
     UNION ALL
 
     SELECT 'weather_station_airport_code',
-           COUNT(*) FILTER (WHERE weather_station_airport_code IS NULL OR weather_station_airport_code = '')
+           SUM(CASE WHEN weather_station_airport_code IS NULL OR weather_station_airport_code = '' THEN 1 ELSE 0 END)
     FROM traffic_partitioned
 ) q
 CROSS JOIN (
