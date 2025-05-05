@@ -3,10 +3,10 @@ USE team26_projectdb;
 DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
-    column_name STRING,
-    nulls BIGINT,
-    total BIGINT,
-    pct_nulls DOUBLE
+    lat_bucket DOUBLE,
+    lng_bucket DOUBLE,
+    avg_delay DOUBLE,
+    count BIGINT
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -14,102 +14,14 @@ LOCATION '${hivevar:WAREHOUSE_PATH}';
 
 INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT
-    q.column_name,
-    q.nulls,
-    t.total,
-    IF(t.total = 0, 0.0, q.nulls / t.total) AS pct_nulls
-FROM (
-    SELECT 'delay_from_typical_traffic' AS column_name,
-           SUM(CASE WHEN delay_from_typical_traffic IS NULL THEN 1 ELSE 0 END) AS nulls
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'delay_from_free_flow_speed',
-           SUM(CASE WHEN delay_from_free_flow_speed IS NULL THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'congestion_speed',
-           SUM(CASE WHEN congestion_speed IS NULL OR congestion_speed = '' THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'temperature',
-           SUM(CASE WHEN temperature IS NULL THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'wind_chill',
-           SUM(CASE WHEN wind_chill IS NULL THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'humidity',
-           SUM(CASE WHEN humidity IS NULL THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'pressure',
-           SUM(CASE WHEN pressure IS NULL THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'visibility',
-           SUM(CASE WHEN visibility IS NULL THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'wind_speed',
-           SUM(CASE WHEN wind_speed IS NULL THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'precipitation',
-           SUM(CASE WHEN precipitation IS NULL THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'weather_time_stamp',
-           SUM(CASE WHEN weather_time_stamp IS NULL THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'weather_event',
-           SUM(CASE WHEN weather_event IS NULL OR weather_event = '' THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'weather_conditions',
-           SUM(CASE WHEN weather_conditions IS NULL OR weather_conditions = '' THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'local_time_zone',
-           SUM(CASE WHEN local_time_zone IS NULL OR local_time_zone = '' THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-
-    UNION ALL
-
-    SELECT 'weather_station_airport_code',
-           SUM(CASE WHEN weather_station_airport_code IS NULL OR weather_station_airport_code = '' THEN 1 ELSE 0 END)
-    FROM traffic_partitioned
-) q
-CROSS JOIN (
-    SELECT COUNT(*) AS total FROM traffic_partitioned
-) t;
+    FLOOR(start_lat * 10) / 10.0 AS lat_bucket,
+    FLOOR(start_lng * 10) / 10.0 AS lng_bucket,
+    AVG(delay_from_typical_traffic) AS avg_delay,
+    COUNT(*) AS count
+FROM traffic_partitioned
+GROUP BY
+    FLOOR(start_lat * 10) / 10.0,
+    FLOOR(start_lng * 10) / 10.0;
 
 INSERT OVERWRITE DIRECTORY '${hivevar:OUTPUT_PATH}'
 ROW FORMAT DELIMITED

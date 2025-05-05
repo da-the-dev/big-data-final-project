@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "lat_bucket,lng_bucket,avg_delay,count" > $1
+echo "metric_a,metric_b,corr_value" > $1

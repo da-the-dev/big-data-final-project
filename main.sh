@@ -17,15 +17,13 @@ bash scripts/stage2.sh
 # echo "Running Stage 4 of the pipeline - Streamlit"
 # bash scripts/stage4.sh
 
-# # Post-processing 
+# # Post-processing
 # echo "Running post-processing!"
 # bash scripts/postprocess.sh
-
 
 # Check the quality of the codes
 echo "The quality of scripts in 'scripts/' folder\n"
 echo "::============================================::"
 pylint scripts
-
 
 echo "Done testing the pipeline!"
