@@ -21,6 +21,8 @@ spark = SparkSession.builder\
         .master("yarn")\
         .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")\
         .config("spark.sql.warehouse.dir", warehouse)\
+        .config("spark.sql.adaptive.enabled", "true") \
+        .config("spark.sql.inMemoryColumnarStorage.batchSize", 100) \
         .enableHiveSupport()\
         .getOrCreate()
 
