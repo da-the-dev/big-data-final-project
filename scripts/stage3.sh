@@ -1,5 +1,6 @@
 #!/bin/bash
 export HADOOP_CONF_DIR=$HADOOP_HOME%/etc/hadoop
+export YARN_CONF_DIR=$HADOOP_HOME/etc/hadoop
 
 echo "Creating train/test sets..."
 
