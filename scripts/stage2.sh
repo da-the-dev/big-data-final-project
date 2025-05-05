@@ -40,15 +40,6 @@ password=$(head -n 1 secrets/.hive.pass)
 #    -f sql/cleanup.hql \
 #    > output/cleanup.log 2> output/cleanup.err
 
-echo "Running analytical queries..."
-for i in {1..15}; do
-   beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
-      -n team26 -p "$password" \
-      -f "sql/q$i.hql" \
-      > "output/q$i.log" 2> "output/q$i.err"
-done
-
-echo "Saving results..."
-bash scripts/prepare_visualization.sh
+bash scripts/prepare_dashboard.sh
 
 echo "Data processing completed successfully"

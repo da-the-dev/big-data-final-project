@@ -1,23 +1,24 @@
 USE team26_projectdb;
 
-DROP TABLE IF EXISTS q12_results;
+DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 
-CREATE EXTERNAL TABLE q12_results(
+CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
     column_name STRING,
-    nulls       BIGINT,
-    total       BIGINT,
-    pct_nulls   DOUBLE
+    nulls BIGINT,
+    total BIGINT,
+    pct_nulls DOUBLE
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-LOCATION 'project/hive/warehouse/q12';
+LOCATION '${hivevar:WAREHOUSE_PATH}';
 
 DROP TABLE IF EXISTS q12_total_rows;
 
 CREATE TABLE q12_total_rows AS
-SELECT COUNT(*) AS total FROM traffic_partitioned;
+SELECT COUNT(*) AS total
+FROM traffic_partitioned;
 
-INSERT INTO q12_results
+INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT 'delay_from_typical_traffic',
        SUM(CASE WHEN delay_from_typical_traffic IS NULL THEN 1 ELSE 0 END),
        t.total,
@@ -108,7 +109,7 @@ SELECT 'weather_station_airport_code',
        SUM(CASE WHEN weather_station_airport_code IS NULL OR weather_station_airport_code = '' THEN 1 ELSE 0 END) / t.total
 FROM traffic_partitioned, q12_total_rows t;
 
-INSERT OVERWRITE DIRECTORY 'project/output/q12'
+INSERT OVERWRITE DIRECTORY '${hivevar:OUTPUT_PATH}'
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
-SELECT * FROM q12_results;
+SELECT * FROM ${hivevar:RESULT_TABLE};
