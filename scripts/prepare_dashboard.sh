@@ -25,6 +25,7 @@ for hql_path in "${DASHBOARD_QUERIES}"/*.hql; do
     [[ -f "${sh_path}" ]] || continue
 
     hdfs dfs -rm -r -f "${hdfs_output}" >/dev/null 2>&1 || true
+    hdfs dfs -rm -r -f "${warehouse_path}" >/dev/null 2>&1 || true
 
     beeline \
         -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
