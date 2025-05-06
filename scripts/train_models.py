@@ -9,7 +9,7 @@ TEAM = "team26"
 WAREHOUSE = "project/hive/warehouse"
 
 spark = (
-    SparkSession.builder.builder.appName(f"{TEAM} - ML Model Training")
+    SparkSession.builder.appName(f"{TEAM} - ML Model Training")
     .master("yarn")
     .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
     .config("spark.sql.warehouse.dir", WAREHOUSE)
