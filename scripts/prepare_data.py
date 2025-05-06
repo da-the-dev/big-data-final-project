@@ -48,8 +48,8 @@ spark = (
     .config("spark.sql.warehouse.dir", WAREHOUSE)
     .config("spark.sql.adaptive.enabled", "true")
     .config("spark.sql.shuffle.partitions", "200")
-    .config("spark.executor.instances", "12")
-    .config("spark.executor.cores", "1")
+    .config("spark.executor.instances", "5")
+    .config("spark.executor.cores", "4")
     .config("spark.executor.memory", "4g")
     .config("spark.executor.memoryOverhead", "1g")
     .config("spark.dynamicAllocation.enabled", "false")
@@ -335,7 +335,7 @@ stop_words_remover = StopWordsRemover(inputCol="words", outputCol="filtered_word
 word2Vec = Word2Vec(
     vectorSize=64,
     seed=42,
-    minCount=5,
+    minCount=100,
     numPartitions=15,
     inputCol="filtered_words",
     outputCol="description_enc",
