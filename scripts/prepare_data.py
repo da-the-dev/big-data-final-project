@@ -1,5 +1,5 @@
 import math
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, Window
 from pyspark.ml import Pipeline, Transformer
 from pyspark.ml.feature import (
     VectorAssembler,
@@ -59,10 +59,20 @@ spark = (
 )
 
 
+# df = (
+#     spark.read.format("parquet").table("team26_projectdb.traffic_partitioned")
+#     # .where(F.col("state") == "CA")
+#     # .limit(100000)
+# )
+
+window_spec = Window.partitionBy("state").orderBy(F.rand())
+
 df = (
-    spark.read.format("parquet").table("team26_projectdb.traffic_partitioned")
-    # .where(F.col("state") == "CA")
-    # .limit(100000)
+    spark.read.format("parquet")
+    .table("team26_projectdb.traffic_partitioned")
+    .withColumn("row_num", F.row_number().over(window_spec))
+    .filter(F.col("row_num") <= 50000)
+    .drop("row_num")
 )
 
 
