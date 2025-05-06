@@ -36,6 +36,7 @@ spark = (
     .config("spark.sql.warehouse.dir", WAREHOUSE)
     .config("spark.sql.adaptive.enabled", "true")
     .config("spark.sql.inMemoryColumnarStorage.batchSize", 100)
+    .config("spark.dynamicAllocation.enabled", True)
     .enableHiveSupport()
     .getOrCreate()
 )
