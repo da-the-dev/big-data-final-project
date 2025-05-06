@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "visibility_bucket,delay_from_typical_traffic" > $1
+echo "visibility_bucket,avg_delay,count" > $1

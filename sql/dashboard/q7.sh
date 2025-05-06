@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "state,delay_from_typical_traffic" > $1
+echo "state,avg_delay,count" > $1
