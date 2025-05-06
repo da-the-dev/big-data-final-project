@@ -52,8 +52,6 @@ test_schema = StructType(
 
 train_data = spark.read.schema(train_schema).json("project/data/train")
 test_data = spark.read.schema(test_schema).json("project/data/test")
-train_data.cache()
-test_data.cache()
 
 LABEL = "delay_from_typical_traffic"
 FEATURES = "features"
