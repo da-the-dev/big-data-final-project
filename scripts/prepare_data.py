@@ -424,13 +424,13 @@ transformed_df = traffic_pipeline.transform(df_essential)
 
 (train_data, test_data) = transformed_df.randomSplit([0.8, 0.2], seed=42)
 
-train_data.select("features", "delay_from_typical_traffic").coalesce(1).write.mode(
+train_data.select("features", "delay_from_typical_traffic").write.mode(
     "overwrite"
-).format("json").save("project/data/train")
+).json("project/data/train")
 
 
-test_data.select("features", "delay_from_typical_traffic").coalesce(1).write.mode(
-    "overwrite"
-).format("json").save("project/data/test")
+test_data.select("features", "delay_from_typical_traffic").write.mode("overwrite").json(
+    "project/data/test"
+)
 
 spark.stop()

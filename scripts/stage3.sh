@@ -24,8 +24,8 @@ echo "Training ML models..."
 spark-submit --master yarn scripts/train_models.py
 
 echo "Exporting results..."
-hdfs dfs -getmerge project/data/train data/train.json
-hdfs dfs -getmerge project/data/test data/test.json
+hdfs dfs -cat project/data/train/*.json > data/train.json
+hdfs dfs -cat project/data/test/*.json > data/test.json
 
 hdfs dfs -get project/models/model1 models/
 hdfs dfs -get project/models/model2 models/
