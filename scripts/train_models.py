@@ -64,8 +64,8 @@ rf = RandomForestRegressor(labelCol=LABEL, featuresCol=FEATURES)
 
 rf_paramGrid = (
     ParamGridBuilder()
-    .addGrid(rf.maxDepth, [5, 10, 15])
-    .addGrid(rf.numTrees, [20, 50, 100])
+    .addGrid(rf.maxDepth, [5, 10])
+    .addGrid(rf.numTrees, [20, 50])
     .build()
 )
 
@@ -97,8 +97,8 @@ lr = LinearRegression(labelCol=LABEL, featuresCol=FEATURES)
 
 lr_paramGrid = (
     ParamGridBuilder()
-    .addGrid(lr.regParam, [0.01, 0.1, 1.0])
-    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
+    .addGrid(lr.regParam, [0.01, 0.1])
+    .addGrid(lr.elasticNetParam, [0.0, 0.5])
     .build()
 )
 
