@@ -320,6 +320,7 @@ word2Vec = Word2Vec(
     vectorSize=64,
     seed=42,
     minCount=5,
+    numPartitions=15,
     inputCol="filtered_words",
     outputCol="description_enc",
 )
