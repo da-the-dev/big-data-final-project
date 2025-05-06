@@ -16,6 +16,7 @@ spark = (
     .config("spark.sql.adaptive.enabled", "true")
     # .config("spark.sql.inMemoryColumnarStorage.batchSize", 1000)
     .config("spark.dynamicAllocation.enabled", True)
+    .config("spark.shuffle.service.enabled", True)
     .enableHiveSupport()
     .getOrCreate()
 )
