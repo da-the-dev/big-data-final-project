@@ -84,9 +84,9 @@ best_rf_model.write().overwrite().save("project/models/model1")
 
 rf_predictions = best_rf_model.transform(test_data)
 
-rf_predictions.select(LABEL, "prediction").coalesce(1).write.mode("overwrite").format(
-    "csv"
-).option("header", "true").save("project/output/model1_predictions")
+rf_predictions.select(LABEL, "prediction").write.mode("overwrite").format("csv").option(
+    "header", "true"
+).save("project/output/model1_predictions")
 
 rf_rmse = evaluator.evaluate(rf_predictions)
 rf_r2 = evaluator.setMetricName("r2").evaluate(rf_predictions)
@@ -116,9 +116,9 @@ best_lr_model.write().overwrite().save("project/models/model2")
 
 lr_predictions = best_lr_model.transform(test_data)
 
-lr_predictions.select(LABEL, "prediction").coalesce(1).write.mode("overwrite").format(
-    "csv"
-).option("header", "true").save("project/output/model2_predictions")
+lr_predictions.select(LABEL, "prediction").write.mode("overwrite").format("csv").option(
+    "header", "true"
+).save("project/output/model2_predictions")
 
 evaluator.setMetricName("rmse")
 lr_rmse = evaluator.evaluate(lr_predictions)
@@ -132,8 +132,8 @@ data = [
 columns = ["Model", "RMSE", "R2", "MAE"]
 evaluation_df = spark.createDataFrame(data, columns)
 
-evaluation_df.coalesce(1).write.mode("overwrite").format("csv").option(
-    "header", "true"
-).save("project/output/evaluation")
+evaluation_df.write.mode("overwrite").format("csv").option("header", "true").save(
+    "project/output/evaluation"
+)
 
 spark.stop()

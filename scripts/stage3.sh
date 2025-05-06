@@ -33,8 +33,8 @@ echo "Exporting results..."
 hdfs dfs -get project/models/model1 models/
 hdfs dfs -get project/models/model2 models/
 
-hdfs dfs -getmerge project/output/model1_predictions output/model1_predictions.csv
-hdfs dfs -getmerge project/output/model2_predictions output/model2_predictions.csv
-hdfs dfs -getmerge project/output/evaluation output/evaluation.csv
+hdfs dfs -getmerge project/output/model1_predictions/*.csv output/model1_predictions.csv
+hdfs dfs -getmerge project/output/model2_predictions/*.csv output/model2_predictions.csv
+hdfs dfs -getmerge project/output/evaluation/*.csv output/evaluation.csv
 
 echo "Pipeline execution completed successfully."
