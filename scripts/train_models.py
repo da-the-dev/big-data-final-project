@@ -8,32 +8,33 @@ from pyspark.sql.types import StructType, StructField, DoubleType
 TEAM = "team26"
 WAREHOUSE = "project/hive/warehouse"
 
-spark = (
-    SparkSession.builder.appName(f"{TEAM} - ML Model Training")
-    .master("yarn")
-    .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
-    .config("spark.sql.warehouse.dir", WAREHOUSE)
-    .config("spark.sql.adaptive.enabled", "true")
-    .config("spark.sql.inMemoryColumnarStorage.batchSize", 200)
-    .enableHiveSupport()
-    .getOrCreate()
-)
 # spark = (
 #     SparkSession.builder.appName(f"{TEAM} - ML Model Training")
 #     .master("yarn")
 #     .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
-#     .config("spark.hadoop.dfs.replication", "1")
 #     .config("spark.sql.warehouse.dir", WAREHOUSE)
 #     .config("spark.sql.adaptive.enabled", "true")
-#     .config("spark.sql.shuffle.partitions", "400")
-#     .config("spark.executor.instances", "5")
-#     .config("spark.executor.cores", "4")
-#     .config("spark.executor.memory", "4g")
-#     .config("spark.executor.memoryOverhead", "1g")
-#     .config("spark.dynamicAllocation.enabled", "false")
+#     .config("spark.sql.inMemoryColumnarStorage.batchSize", 200)
 #     .enableHiveSupport()
 #     .getOrCreate()
 # )
+spark = (
+    SparkSession.builder.appName(f"{TEAM} - ML Model Training")
+    .master("yarn")
+    .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+    .config("spark.hadoop.dfs.replication", "1")
+    .config("spark.sql.warehouse.dir", WAREHOUSE)
+    .config("spark.sql.adaptive.enabled", "true")
+    # .config("spark.sql.shuffle.partitions", "400")
+    .config("spark.sql.inMemoryColumnarStorage.batchSize", 400)
+    .config("spark.executor.instances", "5")
+    .config("spark.executor.cores", "4")
+    .config("spark.executor.memory", "4g")
+    .config("spark.executor.memoryOverhead", "1g")
+    .config("spark.dynamicAllocation.enabled", "false")
+    .enableHiveSupport()
+    .getOrCreate()
+)
 
 train_schema = StructType(
     [
