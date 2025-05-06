@@ -48,7 +48,7 @@ spark = (
     .config("spark.sql.warehouse.dir", WAREHOUSE)
     .config("spark.sql.adaptive.enabled", "true")
     .config("spark.sql.shuffle.partitions", "200")
-    .config("spark.executor.instances", "16")
+    .config("spark.executor.instances", "12")
     .config("spark.executor.cores", "1")
     .config("spark.executor.memory", "4g")
     .config("spark.executor.memoryOverhead", "1g")
