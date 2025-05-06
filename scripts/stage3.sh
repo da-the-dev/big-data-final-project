@@ -15,7 +15,7 @@ hdfs dfs -rm -r -skipTrash project/output/evaluation || true
 # Clean local directories
 rm -rf data/train.json data/test.json
 rm -rf models/model1 models/model2
-rm -rf output/model1_predictions output/model2_predictions output/evaluation
+rm -rf output/model1_predictions.csv output/model2_predictions.csv output/evaluation.csv
 
 echo "Running data preparation pipeline..."
 spark-submit --master yarn scripts/prepare_data.py
@@ -26,6 +26,9 @@ spark-submit --master yarn scripts/train_models.py
 echo "Exporting results..."
 hdfs dfs -getmerge project/data/train data/train.json
 hdfs dfs -getmerge project/data/test data/test.json
+
+hdfs dfs -get project/models/model1 models/
+hdfs dfs -get project/models/model2 models/
 
 hdfs dfs -getmerge project/output/model1_predictions output/model1_predictions.csv
 hdfs dfs -getmerge project/output/model2_predictions output/model2_predictions.csv
