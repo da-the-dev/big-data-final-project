@@ -74,6 +74,7 @@ rf_cv = CrossValidator(
     estimatorParamMaps=rf_paramGrid,
     evaluator=evaluator,
     numFolds=5,
+    parallelism=20,
 )
 
 rf_cvModel = rf_cv.fit(train_data)
@@ -106,6 +107,7 @@ lr_cv = CrossValidator(
     estimatorParamMaps=lr_paramGrid,
     evaluator=evaluator.setMetricName("rmse"),
     numFolds=5,
+    parallelism=20,
 )
 
 lr_cvModel = lr_cv.fit(train_data)
