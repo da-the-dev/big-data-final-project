@@ -2,17 +2,17 @@
 export HADOOP_CONF_DIR=/etc/hadoop/conf
 export YARN_CONF_DIR=/etc/hadoop/conf
 
-echo "Cleaning up previous data..."
-hdfs dfs -rm -r -skipTrash project/data/train || true
-hdfs dfs -rm -r -skipTrash project/data/test || true
-rm -rf data/train.json data/test.json
+# echo "Cleaning up previous data..."
+# hdfs dfs -rm -r -skipTrash project/data/train || true
+# hdfs dfs -rm -r -skipTrash project/data/test || true
+# rm -rf data/train.json data/test.json
 
-echo "Running data preparation pipeline..."
-spark-submit --master yarn scripts/prepare_data.py
+# echo "Running data preparation pipeline..."
+# spark-submit --master yarn scripts/prepare_data.py
 
-echo "Exporting data..."
-hdfs dfs -cat project/data/train/*.json > data/train.json
-hdfs dfs -cat project/data/test/*.json > data/test.json
+# echo "Exporting data..."
+# hdfs dfs -cat project/data/train/*.json > data/train.json
+# hdfs dfs -cat project/data/test/*.json > data/test.json
 
 
 hdfs dfs -rm -r -skipTrash project/models/model1 || true

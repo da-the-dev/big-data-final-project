@@ -26,7 +26,7 @@ spark = (
     .config("spark.hadoop.dfs.replication", "1")
     .config("spark.sql.warehouse.dir", WAREHOUSE)
     .config("spark.sql.adaptive.enabled", "true")
-    .config("spark.sql.shuffle.partitions", "200")
+    .config("spark.sql.shuffle.partitions", "100")
     .config("spark.executor.instances", "5")
     .config("spark.executor.cores", "4")
     .config("spark.executor.memory", "4g")
@@ -52,6 +52,8 @@ test_schema = StructType(
 
 train_data = spark.read.schema(train_schema).json("project/data/train")
 test_data = spark.read.schema(test_schema).json("project/data/test")
+train_data.cache()
+test_data.cache()
 
 LABEL = "delay_from_typical_traffic"
 FEATURES = "features"
@@ -74,7 +76,7 @@ rf_cv = CrossValidator(
     estimatorParamMaps=rf_paramGrid,
     evaluator=evaluator,
     numFolds=5,
-    parallelism=4,
+    parallelism=20,
 )
 
 rf_cvModel = rf_cv.fit(train_data)
@@ -107,7 +109,7 @@ lr_cv = CrossValidator(
     estimatorParamMaps=lr_paramGrid,
     evaluator=evaluator.setMetricName("rmse"),
     numFolds=5,
-    parallelism=4,
+    parallelism=20,
 )
 
 lr_cvModel = lr_cv.fit(train_data)
