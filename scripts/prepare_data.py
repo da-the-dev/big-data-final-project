@@ -1,37 +1,63 @@
 from pyspark.sql import SparkSession
 from pyspark.ml import Pipeline, Transformer
-from pyspark.ml.feature import (VectorAssembler, Imputer, 
-                               StringIndexer, OneHotEncoder, FeatureHasher,
-                               Tokenizer, StopWordsRemover, Word2Vec)
-from pyspark.ml.param.shared import HasInputCol, HasOutputCol, HasInputCols, Param, Params, TypeConverters
+from pyspark.ml.feature import (
+    VectorAssembler,
+    Imputer,
+    StringIndexer,
+    OneHotEncoder,
+    FeatureHasher,
+    Tokenizer,
+    StopWordsRemover,
+    Word2Vec,
+)
+from pyspark.ml.param.shared import (
+    HasInputCol,
+    HasOutputCol,
+    HasInputCols,
+    Param,
+    Params,
+    TypeConverters,
+)
 from pyspark.ml.util import DefaultParamsReadable, DefaultParamsWritable
 from pyspark import keyword_only
 import pyspark.sql.functions as F
-from pyspark.sql.types import StructType, StructField, DoubleType
 import math
 
 # Add here your team number teamx
-team = "team26"
+TEAM = "team26"
 
 # location of your Hive database in HDFS
-warehouse = "project/hive/warehouse"
+WAREHOUSE = "project/hive/warehouse"
 
-spark = SparkSession.builder\
-        .appName("{} - spark ML".format(team))\
-        .master("yarn")\
-        .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")\
-        .config("spark.sql.warehouse.dir", warehouse)\
-        .config("spark.sql.adaptive.enabled", "true") \
-        .config("spark.sql.inMemoryColumnarStorage.batchSize", 100) \
-        .enableHiveSupport()\
-        .getOrCreate()
+spark = (
+    SparkSession.builder.appName(f"{TEAM} - spark ML")
+    .master("yarn")
+    .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+    .config("spark.sql.warehouse.dir", WAREHOUSE)
+    .config("spark.sql.adaptive.enabled", "true")
+    .config("spark.sql.inMemoryColumnarStorage.batchSize", 100)
+    .enableHiveSupport()
+    .getOrCreate()
+)
 
-df = spark.read.format("parquet").table("team26_projectdb.traffic_partitioned").where(F.col("state") == "CA").limit(1000)
+df = (
+    spark.read.format("parquet")
+    .table("team26_projectdb.traffic_partitioned")
+    .where(F.col("state") == "CA")
+    .limit(1000)
+)
+
 
 # Custom transformer for cyclical encoding of temporal features
-class CyclicalEncoder(Transformer, HasInputCol, HasOutputCol, DefaultParamsReadable, DefaultParamsWritable):
-    periodicity = Param(Params._dummy(), "periodicity", "The periodicity of the feature", 
-                       typeConverter=TypeConverters.toFloat)
+class CyclicalEncoder(
+    Transformer, HasInputCol, HasOutputCol, DefaultParamsReadable, DefaultParamsWritable
+):
+    periodicity = Param(
+        Params._dummy(),
+        "periodicity",
+        "The periodicity of the feature",
+        typeConverter=TypeConverters.toFloat,
+    )
 
     @keyword_only
     def __init__(self, inputCol=None, outputCol=None, periodicity=None):
@@ -59,10 +85,19 @@ class CyclicalEncoder(Transformer, HasInputCol, HasOutputCol, DefaultParamsReada
         sin_col = F.sin(2 * math.pi * F.col(inputCol) / periodicity)
         cos_col = F.cos(2 * math.pi * F.col(inputCol) / periodicity)
 
-        return dataset.withColumn(f"{outputCol}_sin", sin_col).withColumn(f"{outputCol}_cos", cos_col)
+        return dataset.withColumn(f"{outputCol}_sin", sin_col).withColumn(
+            f"{outputCol}_cos", cos_col
+        )
+
 
 # Custom transformer for geodetic to ECEF conversion
-class GeoToECEF(Transformer, HasInputCols, HasOutputCol, DefaultParamsReadable, DefaultParamsWritable):
+class GeoToECEF(
+    Transformer,
+    HasInputCols,
+    HasOutputCol,
+    DefaultParamsReadable,
+    DefaultParamsWritable,
+):
     @keyword_only
     def __init__(self, inputCols=None, outputCol=None):
         super(GeoToECEF, self).__init__()
@@ -83,22 +118,30 @@ class GeoToECEF(Transformer, HasInputCols, HasOutputCol, DefaultParamsReadable, 
         b = 6356752.3142  # semi-minor axis
         f = (a - b) / a  # flattening
         e_sq = f * (2 - f)  # eccentricity squared
-        
+
         lat_rad = F.radians(F.col(inputCols[0]))
         lon_rad = F.radians(F.col(inputCols[1]))
 
         N = a / F.sqrt(1 - e_sq * F.pow(F.sin(lat_rad), 2))
         if len(inputCols) == 3:
             alt = F.col(inputCols[2])
-            return dataset \
-                .withColumn(f"{outputCol}_x", (N + alt) * F.cos(lat_rad) * F.cos(lon_rad)) \
-                .withColumn(f"{outputCol}_y", (N + alt) * F.cos(lat_rad) * F.sin(lon_rad)) \
+            return (
+                dataset.withColumn(
+                    f"{outputCol}_x", (N + alt) * F.cos(lat_rad) * F.cos(lon_rad)
+                )
+                .withColumn(
+                    f"{outputCol}_y", (N + alt) * F.cos(lat_rad) * F.sin(lon_rad)
+                )
                 .withColumn(f"{outputCol}_z", (N * (1 - e_sq) + alt) * F.sin(lat_rad))
+            )
         else:
-            return dataset \
-                .withColumn(f"{outputCol}_x", N * F.cos(lat_rad) * F.cos(lon_rad)) \
-                .withColumn(f"{outputCol}_y", N * F.cos(lat_rad) * F.sin(lon_rad)) \
+            return (
+                dataset.withColumn(
+                    f"{outputCol}_x", N * F.cos(lat_rad) * F.cos(lon_rad)
+                )
+                .withColumn(f"{outputCol}_y", N * F.cos(lat_rad) * F.sin(lon_rad))
                 .withColumn(f"{outputCol}_z", (N * (1 - e_sq)) * F.sin(lat_rad))
+            )
 
 
 class TimeDeltaTransformer(Transformer, HasInputCols, HasOutputCol):
@@ -111,17 +154,25 @@ class TimeDeltaTransformer(Transformer, HasInputCols, HasOutputCol):
         outputCol = self.getOutputCol()
 
         if len(inputCols) != 2:
-            raise ValueError("inputCols should contain exactly 2 columns (start_time, end_time)")
+            raise ValueError(
+                "inputCols should contain exactly 2 columns (start_time, end_time)"
+            )
 
         start_time_col, end_time_col = inputCols
 
         return dataset.withColumn(
             outputCol,
-            (F.unix_timestamp(F.col(end_time_col)) - F.unix_timestamp(F.col(start_time_col))) / 3600
+            (
+                F.unix_timestamp(F.col(end_time_col))
+                - F.unix_timestamp(F.col(start_time_col))
+            )
+            / 3600,
         )
 
 
-class TimeFeatureExtractor(Transformer, HasInputCol, HasOutputCol, DefaultParamsReadable, DefaultParamsWritable):
+class TimeFeatureExtractor(
+    Transformer, HasInputCol, HasOutputCol, DefaultParamsReadable, DefaultParamsWritable
+):
     @keyword_only
     def __init__(self, inputCol=None, outputCol=None):
         super().__init__()
@@ -137,15 +188,18 @@ class TimeFeatureExtractor(Transformer, HasInputCol, HasOutputCol, DefaultParams
         input_col = self.getInputCol()
         outputCol = self.getOutputCol()
 
-        return dataset \
-            .withColumn(f"{outputCol}_year", F.year(input_col)) \
-            .withColumn(f"{outputCol}_month", F.month(input_col)) \
-            .withColumn(f"{outputCol}_day", F.dayofmonth(input_col)) \
-            .withColumn(f"{outputCol}_hour", F.hour(input_col)) \
+        return (
+            dataset.withColumn(f"{outputCol}_year", F.year(input_col))
+            .withColumn(f"{outputCol}_month", F.month(input_col))
+            .withColumn(f"{outputCol}_day", F.dayofmonth(input_col))
+            .withColumn(f"{outputCol}_hour", F.hour(input_col))
             .withColumn(f"{outputCol}_minute", F.minute(input_col))
+        )
 
 
-class NAIndicator(Transformer, HasInputCol, HasOutputCol, DefaultParamsReadable, DefaultParamsWritable):
+class NAIndicator(
+    Transformer, HasInputCol, HasOutputCol, DefaultParamsReadable, DefaultParamsWritable
+):
     @keyword_only
     def __init__(self, inputCol=None, outputCol=None):
         super().__init__()
@@ -161,19 +215,17 @@ class NAIndicator(Transformer, HasInputCol, HasOutputCol, DefaultParamsReadable,
         input_col = self.getInputCol()
         output_col = self.getOutputCol()
 
-        return dataset.withColumn(
-            output_col,
-            F.col(input_col).isNull().cast("byte")
-        )
+        return dataset.withColumn(output_col, F.col(input_col).isNull().cast("byte"))
+
 
 columns_to_drop = [
     "delay_from_free_flow_speed",  # Potential data leakage
-    "end_time",                    # Potential data leakage
-    "weather_event",               # High missing rate (94%) and redundant
-    "local_time_zone",             # Already encoded in timestamps
-    "zip_code",                    # Unique identifier
-    "id",                          # Unique identifier
-    "country"                      # Only contains US, so no variability
+    "end_time",  # Potential data leakage
+    "weather_event",  # High missing rate (94%) and redundant
+    "local_time_zone",  # Already encoded in timestamps
+    "zip_code",  # Unique identifier
+    "id",  # Unique identifier
+    "country",  # Only contains US, so no variability
 ]
 
 df_essential = df.drop(*columns_to_drop)
@@ -181,35 +233,22 @@ df_essential = df_essential.filter(F.col("delay_from_typical_traffic").isNotNull
 df_essential = df_essential.fillna({"description": ""})
 final_features = []
 
-df_essential.columns
 
 # Missing indcators
-wind_na_indicator = NAIndicator(
-    inputCol="wind_chill",
-    outputCol="wind_chill_na"
-)
+wind_na_indicator = NAIndicator(inputCol="wind_chill", outputCol="wind_chill_na")
 
 precipitation_na_indicator = NAIndicator(
-    inputCol="precipitation",
-    outputCol="precipitation_na"
+    inputCol="precipitation", outputCol="precipitation_na"
 )
-final_features.extend([
-    "wind_chill_na",
-    "precipitation_na"
-])
+final_features.extend(["wind_chill_na", "precipitation_na"])
 
 # Categorical
-low_cardinality_cols = [
-    "severity",
-    "congestion_speed",
-    "state",
-    "wind_dir"
-]
+low_cardinality_cols = ["severity", "congestion_speed", "state", "wind_dir"]
 high_cardinality_cols = [
     "county",
     "city",
     "weather_station_airport_code",
-    "weather_conditions"
+    "weather_conditions",
 ]
 ultra_high_cardinality_cols = ["street"]
 
@@ -218,7 +257,9 @@ indexers = [
     for col in low_cardinality_cols
 ]
 encoders = [
-    OneHotEncoder(inputCol=f"{col}_idx", outputCol=f"{col}_onehot", handleInvalid="keep")
+    OneHotEncoder(
+        inputCol=f"{col}_idx", outputCol=f"{col}_onehot", handleInvalid="keep"
+    )
     for col in low_cardinality_cols
 ]
 
@@ -229,7 +270,7 @@ for col in high_cardinality_cols:
             inputCols=[col],
             outputCol=f"{col}_hash",
             numFeatures=16,
-            categoricalCols=[col]
+            categoricalCols=[col],
         )
     )
 
@@ -240,7 +281,7 @@ for col in ultra_high_cardinality_cols:
             inputCols=[col],
             outputCol=f"{col}_hash",
             numFeatures=32,
-            categoricalCols=[col]
+            categoricalCols=[col],
         )
     )
 for col in low_cardinality_cols:
@@ -251,13 +292,9 @@ for col in high_cardinality_cols + ultra_high_cardinality_cols:
 
 # Time transformation
 weather_time_transformer = TimeDeltaTransformer(
-    inputCols=["start_time", "weather_time_stamp"],
-    outputCol="weather_time_delta"
+    inputCols=["start_time", "weather_time_stamp"], outputCol="weather_time_delta"
 )
-start_time_transformer = TimeFeatureExtractor(
-    inputCol="start_time",
-    outputCol="start"
-)
+start_time_transformer = TimeFeatureExtractor(inputCol="start_time", outputCol="start")
 
 # Cycle and Geo
 time_encoders = []
@@ -265,32 +302,25 @@ for col, period in [
     ("start_month", 12),
     ("start_day", 31),
     ("start_hour", 24),
-    ("start_minute", 60)
+    ("start_minute", 60),
 ]:
     time_encoders.append(
         CyclicalEncoder(inputCol=col, outputCol=col, periodicity=period)
     )
 
 geo_transformer = GeoToECEF(
-    inputCols=["start_lat", "start_lng"],
-    outputCol="ecef_coords"
+    inputCols=["start_lat", "start_lng"], outputCol="ecef_coords"
 )
 
 # Text
-tokenizer = Tokenizer(
-    inputCol="description",
-    outputCol="words"
-)
-stop_words_remover = StopWordsRemover(
-    inputCol="words",
-    outputCol="filtered_words"
-)
+tokenizer = Tokenizer(inputCol="description", outputCol="words")
+stop_words_remover = StopWordsRemover(inputCol="words", outputCol="filtered_words")
 word2Vec = Word2Vec(
     vectorSize=64,
     seed=42,
     minCount=5,
     inputCol="filtered_words",
-    outputCol="description_enc"
+    outputCol="description_enc",
 )
 final_features.append("description_enc")
 
@@ -314,40 +344,28 @@ regular_continuous = [
     "start_minute_cos",
     "ecef_coords_x",
     "ecef_coords_y",
-    "ecef_coords_z"
+    "ecef_coords_z",
 ]
-high_missing_continuous = [
-    "wind_chill",
-    "precipitation"
-]
+high_missing_continuous = ["wind_chill", "precipitation"]
 
 regular_imputer = Imputer(
-    inputCols=regular_continuous,
-    outputCols=regular_continuous,
-    strategy="mean"
+    inputCols=regular_continuous, outputCols=regular_continuous, strategy="mean"
 )
 high_missing_imputer = Imputer(
     inputCols=high_missing_continuous,
     outputCols=high_missing_continuous,
-    strategy="median"
+    strategy="median",
 )
 year_imputer = Imputer(
-    inputCols=["start_year"],
-    outputCols=["start_year"],
-    strategy="mode"
+    inputCols=["start_year"], outputCols=["start_year"], strategy="mode"
 )
 final_features += regular_continuous + high_missing_continuous + ["start_year"]
 
 vector_assembler = VectorAssembler(
-    inputCols=final_features,
-    outputCol="features",
-    handleInvalid="keep"
+    inputCols=final_features, outputCol="features", handleInvalid="keep"
 )
 
-missing_indicators = [
-    wind_na_indicator,
-    precipitation_na_indicator
-]
+missing_indicators = [wind_na_indicator, precipitation_na_indicator]
 
 categorical_indexers = indexers
 categorical_encoders = encoders
@@ -363,30 +381,22 @@ cyclical_encoders = time_encoders
 
 geo_ecef = geo_transformer
 
-text_processing = [
-    tokenizer,
-    stop_words_remover,
-    word2Vec
-]
+text_processing = [tokenizer, stop_words_remover, word2Vec]
 
-imputers = [
-    regular_imputer,
-    high_missing_imputer,
-    year_imputer
-]
+imputers = [regular_imputer, high_missing_imputer, year_imputer]
 
 pipeline_stages = (
-    missing_indicators +
-    categorical_indexers +
-    categorical_encoders +
-    high_card_hashers +
-    ultra_card_hashers +
-    [time_delta, time_features] +
-    cyclical_encoders +
-    [geo_ecef] +
-    text_processing +
-    imputers +
-    [vector_assembler]
+    missing_indicators
+    + categorical_indexers
+    + categorical_encoders
+    + high_card_hashers
+    + ultra_card_hashers
+    + [time_delta, time_features]
+    + cyclical_encoders
+    + [geo_ecef]
+    + text_processing
+    + imputers
+    + [vector_assembler]
 )
 
 final_pipeline = Pipeline(stages=pipeline_stages)
@@ -396,19 +406,13 @@ transformed_df = traffic_pipeline.transform(df_essential)
 
 (train_data, test_data) = transformed_df.randomSplit([0.8, 0.2], seed=42)
 
-train_data.select("features", "delay_from_typical_traffic")\
-    .coalesce(1)\
-    .write\
-    .mode("overwrite")\
-    .format("json")\
-    .save("project/data/train")
+train_data.select("features", "delay_from_typical_traffic").coalesce(1).write.mode(
+    "overwrite"
+).format("json").save("project/data/train")
 
 
-test_data.select("features", "delay_from_typical_traffic")\
-    .coalesce(1)\
-    .write\
-    .mode("overwrite")\
-    .format("json")\
-    .save("project/data/test")
+test_data.select("features", "delay_from_typical_traffic").coalesce(1).write.mode(
+    "overwrite"
+).format("json").save("project/data/test")
 
 spark.stop()
