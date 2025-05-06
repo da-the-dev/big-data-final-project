@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "year,state,delay_from_typical_traffic" > $1
+echo "metric_a,metric_b,corr_value" > $1

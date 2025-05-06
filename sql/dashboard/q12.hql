@@ -3,11 +3,10 @@ USE team26_projectdb;
 DROP TABLE IF EXISTS ${hivevar:RESULT_TABLE};
 
 CREATE EXTERNAL TABLE ${hivevar:RESULT_TABLE} (
-    delay_from_typical_traffic DOUBLE,
-    distance                   DOUBLE,
-    precipitation              DOUBLE,
-    temperature                DOUBLE,
-    humidity                   DOUBLE
+    lat_bucket DOUBLE,
+    lng_bucket DOUBLE,
+    avg_delay DOUBLE,
+    count BIGINT
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -15,18 +14,14 @@ LOCATION '${hivevar:WAREHOUSE_PATH}';
 
 INSERT INTO ${hivevar:RESULT_TABLE}
 SELECT
-    delay_from_typical_traffic,
-    distance,
-    precipitation,
-    temperature,
-    humidity
+    FLOOR(start_lat * 10) / 10.0 AS lat_bucket,
+    FLOOR(start_lng * 10) / 10.0 AS lng_bucket,
+    AVG(delay_from_typical_traffic) AS avg_delay,
+    COUNT(*) AS count
 FROM traffic_partitioned
-WHERE
-    delay_from_typical_traffic IS NOT NULL AND
-    distance IS NOT NULL AND
-    precipitation IS NOT NULL AND
-    temperature IS NOT NULL AND
-    humidity IS NOT NULL;
+GROUP BY
+    FLOOR(start_lat * 10) / 10.0,
+    FLOOR(start_lng * 10) / 10.0;
 
 INSERT OVERWRITE DIRECTORY '${hivevar:OUTPUT_PATH}'
 ROW FORMAT DELIMITED

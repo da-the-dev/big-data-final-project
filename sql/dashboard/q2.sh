@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "weather_conditions,delay_from_typical_traffic" > $1
+echo "weather_conditions,avg_delay,count" > $1
