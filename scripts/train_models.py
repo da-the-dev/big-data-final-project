@@ -23,6 +23,7 @@ spark = (
     SparkSession.builder.appName(f"{TEAM} - ML Model Training")
     .master("yarn")
     .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+    .config("spark.hadoop.dfs.replication", "1")
     .config("spark.sql.warehouse.dir", WAREHOUSE)
     .config("spark.sql.adaptive.enabled", "true")
     .config("spark.sql.shuffle.partitions", "200")
