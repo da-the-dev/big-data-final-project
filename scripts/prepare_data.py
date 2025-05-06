@@ -29,18 +29,34 @@ TEAM = "team26"
 # location of your Hive database in HDFS
 WAREHOUSE = "project/hive/warehouse"
 
+# spark = (
+#     SparkSession.builder.appName(f"{TEAM} - spark ML")
+#     .master("yarn")
+#     .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+#     .config("spark.sql.shuffle.partitions", 15)
+#     .config("spark.sql.warehouse.dir", WAREHOUSE)
+#     .config("spark.sql.adaptive.enabled", "true")
+#     .config("spark.shuffle.service.enabled", True)
+#     .config("spark.dynamicAllocation.enabled", True)
+#     .enableHiveSupport()
+#     .getOrCreate()
+# )
 spark = (
     SparkSession.builder.appName(f"{TEAM} - spark ML")
     .master("yarn")
     .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
     .config("spark.sql.warehouse.dir", WAREHOUSE)
     .config("spark.sql.adaptive.enabled", "true")
-    # .config("spark.sql.inMemoryColumnarStorage.batchSize", 100)
-    .config("spark.shuffle.service.enabled", True)
-    .config("spark.dynamicAllocation.enabled", True)
+    .config("spark.sql.shuffle.partitions", "200")
+    .config("spark.executor.instances", "8")
+    .config("spark.executor.cores", "6")
+    .config("spark.executor.memory", "6g")
+    .config("spark.executor.memoryOverhead", "1g")
+    .config("spark.dynamicAllocation.enabled", "false")
     .enableHiveSupport()
     .getOrCreate()
 )
+
 
 df = (
     spark.read.format("parquet").table("team26_projectdb.traffic_partitioned")
