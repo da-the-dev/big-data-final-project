@@ -20,6 +20,7 @@ spark = (
     .enableHiveSupport()
     .getOrCreate()
 )
+
 # spark = (
 #     SparkSession.builder.appName(f"{TEAM} - ML Model Training")
 #     .master("yarn")
