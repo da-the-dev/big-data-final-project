@@ -5,14 +5,14 @@ from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.linalg import VectorUDT
 from pyspark.sql.types import StructType, StructField, DoubleType
 
-team = "team26"
-warehouse = "project/hive/warehouse"
+TEAM = "team26"
+WAREHOUSE = "project/hive/warehouse"
 
 spark = (
-    SparkSession.builder.appName("{} - ML Model Training".format(team))
+    SparkSession.builder.appName(f"{TEAM} - ML Model Training")
     .master("yarn")
     .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
-    .config("spark.sql.warehouse.dir", warehouse)
+    .config("spark.sql.warehouse.dir", WAREHOUSE)
     .config("spark.sql.adaptive.enabled", "true")
     .config("spark.sql.inMemoryColumnarStorage.batchSize", 100)
     .enableHiveSupport()
@@ -36,14 +36,14 @@ test_schema = StructType(
 train_data = spark.read.schema(train_schema).json("project/data/train")
 test_data = spark.read.schema(test_schema).json("project/data/test")
 
-label_col = "delay_from_typical_traffic"
-feature_col = "features"
+LABEL = "delay_from_typical_traffic"
+FEATURES = "features"
 
 evaluator = RegressionEvaluator(
-    labelCol=label_col, predictionCol="prediction", metricName="rmse"
+    labelCol=LABEL, predictionCol="prediction", metricName="rmse"
 )
 
-rf = RandomForestRegressor(labelCol=label_col, featuresCol=feature_col)
+rf = RandomForestRegressor(labelCol=LABEL, featuresCol=FEATURES)
 
 rf_paramGrid = (
     ParamGridBuilder()
@@ -68,15 +68,15 @@ best_rf_model.write().overwrite().save("project/models/model1")
 
 rf_predictions = best_rf_model.transform(test_data)
 
-rf_predictions.select(label_col, "prediction").coalesce(1).write.mode(
-    "overwrite"
-).format("csv").option("header", "true").save("project/output/model1_predictions")
+rf_predictions.select(LABEL, "prediction").coalesce(1).write.mode("overwrite").format(
+    "csv"
+).option("header", "true").save("project/output/model1_predictions")
 
 rf_rmse = evaluator.evaluate(rf_predictions)
 rf_r2 = evaluator.setMetricName("r2").evaluate(rf_predictions)
 rf_mae = evaluator.setMetricName("mae").evaluate(rf_predictions)
 
-lr = LinearRegression(labelCol=label_col, featuresCol=feature_col)
+lr = LinearRegression(labelCol=LABEL, featuresCol=FEATURES)
 
 lr_paramGrid = (
     ParamGridBuilder()
@@ -101,9 +101,9 @@ best_lr_model.write().overwrite().save("project/models/model2")
 
 lr_predictions = best_lr_model.transform(test_data)
 
-lr_predictions.select(label_col, "prediction").coalesce(1).write.mode(
-    "overwrite"
-).format("csv").option("header", "true").save("project/output/model2_predictions")
+lr_predictions.select(LABEL, "prediction").coalesce(1).write.mode("overwrite").format(
+    "csv"
+).option("header", "true").save("project/output/model2_predictions")
 
 evaluator.setMetricName("rmse")
 lr_rmse = evaluator.evaluate(lr_predictions)

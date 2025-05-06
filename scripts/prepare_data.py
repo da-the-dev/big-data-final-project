@@ -1,3 +1,4 @@
+import math
 from pyspark.sql import SparkSession
 from pyspark.ml import Pipeline, Transformer
 from pyspark.ml.feature import (
@@ -21,7 +22,6 @@ from pyspark.ml.param.shared import (
 from pyspark.ml.util import DefaultParamsReadable, DefaultParamsWritable
 from pyspark import keyword_only
 import pyspark.sql.functions as F
-import math
 
 # Add here your team number teamx
 TEAM = "team26"
@@ -41,10 +41,9 @@ spark = (
 )
 
 df = (
-    spark.read.format("parquet")
-    .table("team26_projectdb.traffic_partitioned")
-    .where(F.col("state") == "CA")
-    .limit(1000)
+    spark.read.format("parquet").table("team26_projectdb.traffic_partitioned")
+    # .where(F.col("state") == "CA")
+    .limit(100000)
 )
 
 
