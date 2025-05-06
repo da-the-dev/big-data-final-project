@@ -26,7 +26,7 @@ spark = (
     .config("spark.hadoop.dfs.replication", "1")
     .config("spark.sql.warehouse.dir", WAREHOUSE)
     .config("spark.sql.adaptive.enabled", "true")
-    .config("spark.sql.shuffle.partitions", "100")
+    .config("spark.sql.shuffle.partitions", "400")
     .config("spark.executor.instances", "5")
     .config("spark.executor.cores", "4")
     .config("spark.executor.memory", "4g")
