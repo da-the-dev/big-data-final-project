@@ -8,15 +8,29 @@ from pyspark.sql.types import StructType, StructField, DoubleType
 TEAM = "team26"
 WAREHOUSE = "project/hive/warehouse"
 
+# spark = (
+#     SparkSession.builder.appName(f"{TEAM} - ML Model Training")
+#     .master("yarn")
+#     .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+#     .config("spark.sql.warehouse.dir", WAREHOUSE)
+#     .config("spark.sql.adaptive.enabled", "true")
+#     .config("spark.shuffle.service.enabled", True)
+#     .config("spark.dynamicAllocation.enabled", True)
+#     .enableHiveSupport()
+#     .getOrCreate()
+# )
 spark = (
     SparkSession.builder.appName(f"{TEAM} - ML Model Training")
     .master("yarn")
     .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
     .config("spark.sql.warehouse.dir", WAREHOUSE)
     .config("spark.sql.adaptive.enabled", "true")
-    # .config("spark.sql.inMemoryColumnarStorage.batchSize", 1000)
-    .config("spark.shuffle.service.enabled", True)
-    .config("spark.dynamicAllocation.enabled", True)
+    .config("spark.sql.shuffle.partitions", "200")
+    .config("spark.executor.instances", "5")
+    .config("spark.executor.cores", "4")
+    .config("spark.executor.memory", "4g")
+    .config("spark.executor.memoryOverhead", "1g")
+    .config("spark.dynamicAllocation.enabled", "false")
     .enableHiveSupport()
     .getOrCreate()
 )
