@@ -43,7 +43,7 @@ spark = (
 df = (
     spark.read.format("parquet").table("team26_projectdb.traffic_partitioned")
     # .where(F.col("state") == "CA")
-    .limit(100000)
+    # .limit(100000)
 )
 
 
