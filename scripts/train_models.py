@@ -8,33 +8,32 @@ from pyspark.sql.types import StructType, StructField, DoubleType
 TEAM = "team26"
 WAREHOUSE = "project/hive/warehouse"
 
+spark = (
+    SparkSession.builder.builder.appName(f"{TEAM} - ML Model Training")
+    .master("yarn")
+    .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+    .config("spark.sql.warehouse.dir", WAREHOUSE)
+    .config("spark.sql.adaptive.enabled", "true")
+    .config("spark.sql.inMemoryColumnarStorage.batchSize", 200)
+    .enableHiveSupport()
+    .getOrCreate()
+)
 # spark = (
 #     SparkSession.builder.appName(f"{TEAM} - ML Model Training")
 #     .master("yarn")
 #     .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
+#     .config("spark.hadoop.dfs.replication", "1")
 #     .config("spark.sql.warehouse.dir", WAREHOUSE)
 #     .config("spark.sql.adaptive.enabled", "true")
-#     .config("spark.shuffle.service.enabled", True)
-#     .config("spark.dynamicAllocation.enabled", True)
+#     .config("spark.sql.shuffle.partitions", "400")
+#     .config("spark.executor.instances", "5")
+#     .config("spark.executor.cores", "4")
+#     .config("spark.executor.memory", "4g")
+#     .config("spark.executor.memoryOverhead", "1g")
+#     .config("spark.dynamicAllocation.enabled", "false")
 #     .enableHiveSupport()
 #     .getOrCreate()
 # )
-spark = (
-    SparkSession.builder.appName(f"{TEAM} - ML Model Training")
-    .master("yarn")
-    .config("hive.metastore.uris", "thrift://hadoop-02.uni.innopolis.ru:9883")
-    .config("spark.hadoop.dfs.replication", "1")
-    .config("spark.sql.warehouse.dir", WAREHOUSE)
-    .config("spark.sql.adaptive.enabled", "true")
-    .config("spark.sql.shuffle.partitions", "400")
-    .config("spark.executor.instances", "5")
-    .config("spark.executor.cores", "4")
-    .config("spark.executor.memory", "4g")
-    .config("spark.executor.memoryOverhead", "1g")
-    .config("spark.dynamicAllocation.enabled", "false")
-    .enableHiveSupport()
-    .getOrCreate()
-)
 
 train_schema = StructType(
     [
@@ -64,8 +63,8 @@ rf = RandomForestRegressor(labelCol=LABEL, featuresCol=FEATURES)
 
 rf_paramGrid = (
     ParamGridBuilder()
-    .addGrid(rf.maxDepth, [5, 10])
-    .addGrid(rf.numTrees, [20, 50])
+    .addGrid(rf.maxDepth, [5, 10, 15])
+    .addGrid(rf.numTrees, [20, 50, 100])
     .build()
 )
 
@@ -97,8 +96,8 @@ lr = LinearRegression(labelCol=LABEL, featuresCol=FEATURES)
 
 lr_paramGrid = (
     ParamGridBuilder()
-    .addGrid(lr.regParam, [0.01, 0.1])
-    .addGrid(lr.elasticNetParam, [0.0, 0.5])
+    .addGrid(lr.regParam, [0.01, 0.1, 1.0])
+    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])
     .build()
 )
 
