@@ -1,0 +1,33 @@
+USE ${DB_NAME};
+
+CREATE EXTERNAL TABLE IF NOT EXISTS model1_predictions (
+    delay_from_typical_traffic DOUBLE,
+    prediction DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION '${MODEL1_LOCATION}'
+TBLPROPERTIES ('skip.header.line.count'='1');
+
+CREATE EXTERNAL TABLE IF NOT EXISTS model2_predictions (
+    delay_from_typical_traffic DOUBLE,
+    prediction DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION '${MODEL2_LOCATION}'
+TBLPROPERTIES ('skip.header.line.count'='1');
+
+CREATE EXTERNAL TABLE IF NOT EXISTS model_evaluation (
+    Model STRING,
+    RMSE DOUBLE,
+    R2 DOUBLE,
+    MAE DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION '${EVAL_LOCATION}'
+TBLPROPERTIES ('skip.header.line.count'='1');
