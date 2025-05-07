@@ -37,14 +37,22 @@ echo "Exporting results..."
 # hdfs dfs -getmerge project/output/model2_predictions/*.csv output/model2_predictions.csv
 # hdfs dfs -getmerge project/output/evaluation/*.csv output/evaluation.csv
 
-(echo delay_from_typical_traffic,prediction > output/model1_predictions.csv) && \
-hdfs dfs -getmerge project/output/model1_predictions/*.csv - | tail -n +2 >> output/model1_predictions.csv
+mkdir -p tmp/model1_predictions tmp/model2_predictions tmp/evaluation
 
-(echo delay_from_typical_traffic,prediction > output/model2_predictions.csv) && \
-hdfs dfs -getmerge project/output/model2_predictions/*.csv - | tail -n +2 >> output/model2_predictions.csv
+hdfs dfs -get project/output/model1_predictions/*.csv tmp/model1_predictions/
+hdfs dfs -get project/output/model2_predictions/*.csv tmp/model2_predictions/
+hdfs dfs -get project/output/evaluation/*.csv tmp/evaluation/
 
-(echo Model,RMSE,R2,MAE > output/evaluation.csv) && \
-hdfs dfs -getmerge project/output/evaluation/*.csv - | tail -n +2 >> output/evaluation.csv
+echo "delay_from_typical_traffic,prediction" > output/model1_predictions.csv
+awk 'FNR > 1 || NR == 1' tmp/model1_predictions/*.csv >> output/model1_predictions.csv
+
+echo "delay_from_typical_traffic,prediction" > output/model2_predictions.csv
+awk 'FNR > 1 || NR == 1' tmp/model2_predictions/*.csv >> output/model2_predictions.csv
+
+echo "Model,RMSE,R2,MAE" > output/evaluation.csv
+awk 'FNR > 1 || NR == 1' tmp/evaluation/*.csv >> output/evaluation.csv
+
+rm -rf tmp
 
 
 echo "Pipeline execution completed successfully."
