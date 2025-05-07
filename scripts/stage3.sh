@@ -15,28 +15,36 @@ export YARN_CONF_DIR=/etc/hadoop/conf
 # hdfs dfs -cat project/data/test/*.json > data/test.json
 
 
-hdfs dfs -rm -r -skipTrash project/models/model1 || true
-hdfs dfs -rm -r -skipTrash project/models/model2 || true
-hdfs dfs -rm -r -skipTrash project/output/model1_predictions || true
-hdfs dfs -rm -r -skipTrash project/output/model2_predictions || true
-hdfs dfs -rm -r -skipTrash project/output/evaluation || true
+# hdfs dfs -rm -r -skipTrash project/models/model1 || true
+# hdfs dfs -rm -r -skipTrash project/models/model2 || true
+# hdfs dfs -rm -r -skipTrash project/output/model1_predictions || true
+# hdfs dfs -rm -r -skipTrash project/output/model2_predictions || true
+# hdfs dfs -rm -r -skipTrash project/output/evaluation || true
 
 # Clean local directories
-rm -rf models/model1 models/model2
+# rm -rf models/model1 models/model2
 rm -rf output/model1_predictions.csv output/model2_predictions.csv output/evaluation.csv
 
-echo "Training ML models..."
-spark-submit --master yarn scripts/train_models.py
+# echo "Training ML models..."
+# spark-submit --master yarn scripts/train_models.py
 
 echo "Exporting results..."
 
-hdfs dfs -get project/models/model1 models/
-hdfs dfs -get project/models/model2 models/
+# hdfs dfs -get project/models/model1 models/
+# hdfs dfs -get project/models/model2 models/
 
-hdfs dfs -getmerge project/output/model1_predictions/*.csv output/model1_predictions.csv
-hdfs dfs -getmerge project/output/model2_predictions/*.csv output/model2_predictions.csv
-hdfs dfs -getmerge project/output/evaluation/*.csv output/evaluation.csv
-awk 'NR == 1 || $0 !~ /^Model,RMSE,R2,MAE$/' output/evaluation.csv > output/evaluation_clean.csv
+# hdfs dfs -getmerge project/output/model1_predictions/*.csv output/model1_predictions.csv
+# hdfs dfs -getmerge project/output/model2_predictions/*.csv output/model2_predictions.csv
+# hdfs dfs -getmerge project/output/evaluation/*.csv output/evaluation.csv
+
+(echo delay_from_typical_traffic,prediction > output/model1_predictions.csv) && \
+hdfs dfs -getmerge project/output/model1_predictions/*.csv - | tail -n +2 >> output/model1_predictions.csv
+
+(echo delay_from_typical_traffic,prediction > output/model2_predictions.csv) && \
+hdfs dfs -getmerge project/output/model2_predictions/*.csv - | tail -n +2 >> output/model2_predictions.csv
+
+(echo Model,RMSE,R2,MAE > output/evaluation.csv) && \
+hdfs dfs -getmerge project/output/evaluation/*.csv - | tail -n +2 >> output/evaluation.csv
 
 
 echo "Pipeline execution completed successfully."
