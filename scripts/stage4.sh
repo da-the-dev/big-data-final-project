@@ -9,4 +9,4 @@ beeline -u jdbc:hive2://hadoop-03.uni.innopolis.ru:10001 \
    --hivevar MODEL2_LOCATION='/user/team26/project/output/model2_predictions' \
    --hivevar EVAL_LOCATION='/user/team26/project/output/evaluation' \
    -f sql/create_ml_tables.hql \
-   > "${LOG_DIR}/ml_table_creation.log" 2> "${LOG_DIR}/ml_table_creation.err"
+   > "output/ml_table_creation.log" 2> "output/ml_table_creation.err"
