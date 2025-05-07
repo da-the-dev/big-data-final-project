@@ -36,5 +36,7 @@ hdfs dfs -get project/models/model2 models/
 hdfs dfs -getmerge project/output/model1_predictions/*.csv output/model1_predictions.csv
 hdfs dfs -getmerge project/output/model2_predictions/*.csv output/model2_predictions.csv
 hdfs dfs -getmerge project/output/evaluation/*.csv output/evaluation.csv
+awk 'NR == 1 || $0 !~ /^Model,RMSE,R2,MAE$/' output/evaluation.csv > output/evaluation_clean.csv
+
 
 echo "Pipeline execution completed successfully."
