@@ -68,23 +68,11 @@ in the [final report](./REPORT.pdf).
         <th>Parh</th>
         <th>Description</th>
     </tr>
-    <tr>
-        <td><code><a href='main.sh'>main.sh</a></code></td>
-        <td>Staring point of the whole pipeline</td>
-    </tr>
-    <tr>
+        <tr>
         <td><code><a href='output/'>output/</a></code></td>
         <td>Important output of our pipeline</td>
     </tr>
-    <tr>
-        <td><code><a href='REPORT.pdf'>REPORT.pdf</a></code></td>
-        <td>Report for this project</td>
-    </tr>
-    <tr>
-        <td><code><a href='requirements.txt'>requirements.txt</a></code></td>
-        <td>Python dependencies</td>
-    </tr>
-    <tr>
+        <tr>
         <td><code><a href='scripts/'>scripts/</a></code></td>
         <td>Scripts that describe the pipeline</td>
     </tr>
@@ -95,6 +83,18 @@ in the [final report](./REPORT.pdf).
     <tr>
         <td><code><a href='sql/'>sql/</a></code></td>
         <td>SQL & HQL queries</td>
+    </tr>
+        <tr>
+        <td><code><a href='REPORT.pdf'>REPORT.pdf</a></code></td>
+        <td>Report for this project</td>
+    </tr>
+    <tr>
+        <td><code><a href='main.sh'>main.sh</a></code></td>
+        <td>Staring point of the whole pipeline</td>
+    </tr>
+    <tr>
+        <td><code><a href='requirements.txt'>requirements.txt</a></code></td>
+        <td>Python dependencies</td>
     </tr>
 </table>
 
