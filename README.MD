@@ -63,11 +63,40 @@ in the [final report](./REPORT.pdf).
 
 ## Folder Structure
 
-| Path / File            | Purpose                                                                                               |
-| ---------------------- | ----------------------------------------------------------------------------------------------------- |
-| [scripts/](./scripts/) | Bash / Python scripts for data collection, ingestion, transformation and automation                   |
-| [sql/](./sql/)         | Hive (`.hql`) and SQL scripts; [sql/dashboard/](./sql/dashboard/) holds queries for Superset datasets |
-| [output/](./output/)   | Pipeline results: predictions, metrics, intermediate CSVs for the dashboard                           |
+<table>
+    <tr>
+        <th>Parh</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td><code><a href='main.sh'>main.sh</a></code></td>
+        <td>Staring point of the whole pipeline</td>
+    </tr>
+    <tr>
+        <td><code><a href='output/'>output/</a></code></td>
+        <td>Important output of our pipeline</td>
+    </tr>
+    <tr>
+        <td><code><a href='REPORT.pdf'>REPORT.pdf</a></code></td>
+        <td>Report for this project</td>
+    </tr>
+    <tr>
+        <td><code><a href='requirements.txt'>requirements.txt</a></code></td>
+        <td>Python dependencies</td>
+    </tr>
+    <tr>
+        <td><code><a href='scripts/'>scripts/</a></code></td>
+        <td>Scripts that describe the pipeline</td>
+    </tr>
+    <tr>
+        <td><code><a href='secrets/'>secrets/</a></code></td>
+        <td>Folder with secrets and passwords</td>
+    </tr>
+    <tr>
+        <td><code><a href='sql/'>sql/</a></code></td>
+        <td>SQL & HQL queries</td>
+    </tr>
+</table>
 
 ## Usage
 
