@@ -1,16 +1,80 @@
-This repository is a template for the final project of big data course. It contains the following directories:
+# Predicting Traffic Delays Using U.S. Congestion and Weather Data
 
-- `data/` contains the dataset files.
-- `models/` contains the Spark ML models.
-- `notebooks/` has the Jupyter or Zeppelin notebooks of your project and used just for learning purposes.
-- `output/` represents the output directory for storing the results of the project. It can contain `csv` files, text files. images and any other materials you returned as an ouput of the pipeline.
-- `scripts/` is a place for storing `.sh` scripts and `.py` scripts of the pipeline.
-- `sql/` is a folder for keeping all `.sql` and `.hql` files.
+> Team 26 – Big Data, Spring 2025
 
-`requirements.txt` lists the Python packages needed for running your Python scripts. Feel free to add more packages when necessary.
+| Name                   | Role                   | Email                             |
+| ---------------------- | ---------------------- | --------------------------------- |
+| Alexey Tkachenko       | Data Engineer          | a.tkachenko@innopolis.university  |
+| Daniil Abrosimov       | ML Specialist          | d.abrosimov@innopolis.university  |
+| Egor Machnev           | Data Scientist         | e.machnev@innopolis.university    |
+| Apollinaria Chernikova | Tester and Tech Writer | a.chernikova@innopolis.university |
 
-`main.sh` is the main script that will run all scripts of the pipeline stages which will execute the full pipeline and store the results in `output/` folder. During checking your project repo, the grader will run only the main script and check the results in `output/` folder.
+![poster](./.github/poster.png)
 
-**Important Note:** You cannot change the content of the script `main.sh` since it will be used for assessment purposes.
+<div align="center">
 
-**Another Note:** The notebooks in `notebooks/` folder are used only for learning purposes since you need to put all Python scripts of the pipeline in `scripts/` folder. During the assessment, the grader can delete the folder `notebooks/` to check that your pipeline does not depend on its content
+[Dashboard](http://hadoop-03.uni.innopolis.ru:8808/superset/dashboard/65/) •
+[Slides](https://docs.google.com/presentation/d/1sM-ThdE7JnkxrupelgnWeVv8Ugl3S6E3jYg3owWLm5A/edit?usp=sharing)
+• [Report](./REPORT.pdf) •
+[Dataset](https://www.kaggle.com/datasets/sobhanmoosavi/us-traffic-congestions-2016-2022)
+
+</div>
+
+## About
+
+Traffic congestion represents a persistent and growing challenge across the
+United States, affecting millions of commuters on a daily basis. This phenomenon
+leads to increased travel times, fuel consumption, and environmental costs,
+while also introducing complexities into urban planning and logistics
+operations.
+
+The objective of this project is to develop a scalable, end-to-end data pipeline
+that transforms raw traffic data into actionable insights using machine learning
+and interactive visualization. To achieve this, we leverage the publicly
+available
+[US Traffic Congestion 2016–2022 dataset](https://www.kaggle.com/datasets/sobhanmoosavi/us-traffic-congestions-2016-2022),
+which contains over **33 million** congestion records from **49 U.S. states**,
+spanning the period from **February 2016 to September 2022**.
+
+The project is guided by three fundamental goals:
+
+1. **Construct a big data pipeline** capable of handling real-world scale,
+   starting from raw CSV files and progressing through data storage,
+   transformation, modeling, and presentation in an analytical dashboard.
+2. **Address key applied questions**, such as:
+   1. Which factors (e.g., weather, time of day, location) most influence the
+      severity and duration of traffic delays?
+   2. Can the duration of a traffic jam be predicted with reasonable accuracy in
+      advance?
+3. **Support decision-making** for urban planners, transportation authorities,
+   and logistics companies by offering a clear, intuitive dashboard that
+   highlights congestion hotspots, temporal patterns, and model-based delay
+   forecasts.
+
+Throughout the course of this project, we addressed a range of technical
+challenges — including the management of missing data, engineering of temporal
+and spatial features, and the complexity of developing distributed machine
+learning models. The final system integrates **PostgreSQL**, **Hive**, **Spark
+MLlib**, and **Apache Superset**, forming a dependable and extensible analytics
+platform for both real-time and historical traffic congestion data.
+
+Full details of our methodology, findings, and system architecture are available
+in the [final report](./REPORT.pdf).
+
+## Folder Structure
+
+| Path / File            | Purpose                                                                                               |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| [scripts/](./scripts/) | Bash / Python scripts for data collection, ingestion, transformation and automation                   |
+| [sql/](./sql/)         | Hive (`.hql`) and SQL scripts; [sql/dashboard/](./sql/dashboard/) holds queries for Superset datasets |
+| [output/](./output/)   | Pipeline results: predictions, metrics, intermediate CSVs for the dashboard                           |
+
+## Usage
+
+Clone the repository and run the pipeline:
+
+```bash
+git clone https://github.com/da-the-dev/big-data-final-project
+cd big-data-final-project
+bash main.sh
+```
