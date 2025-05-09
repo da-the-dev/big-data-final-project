@@ -2,8 +2,12 @@
 
 <table>
     <tr>
-        <th>File</th>
+        <th>Path</th>
         <th>Description</th>
+    </tr>
+        <tr>
+        <td><code><a href='dashboard/'>dashboard/</a></code></td>
+        <td>Scripts for EDA</td>
     </tr>
     <tr>
         <td><code><a href='create_tables.sql'>create_tables.sql</a></code></td>
@@ -33,8 +37,5 @@
         <td><code><a href='cleanup.hql'>cleanup.hql</a></code></td>
         <td>Cleans up Hive br for reproducibility</td>
     </tr>
-    <tr>
-        <td><code><a href='dashboard/'>dashboard/</a></code></td>
-        <td>Scripts for EDA</td>
-    </tr>
+
 </table>

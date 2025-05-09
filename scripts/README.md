@@ -2,7 +2,7 @@
 
 <table>
     <tr>
-        <th>File</th>
+        <th>Path</th>
         <th>Description</th>
     </tr>
     <tr>

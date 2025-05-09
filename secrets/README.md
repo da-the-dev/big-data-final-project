@@ -5,15 +5,15 @@
 
 <table>
     <tr>
-        <th>File</th>
+        <th>Path</th>
         <th>Description</th>
     </tr>
     <tr>
         <td><code>.hive.pass.example</code></td>
-        <td>File with Hive password.</td>
+        <td>Path with Hive password.</td>
     </tr>
     <tr>
         <td><code>.psql.pass.example</code></td>
-        <td>File with PSQL password.</td>
+        <td>Path with PSQL password.</td>
     </tr>
 </table>

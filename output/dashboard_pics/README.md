@@ -3,7 +3,7 @@ Here you can view the pictures from our dashboard
 
 <table>
     <tr>
-        <th>File</th>
+        <th>Path</th>
         <th>Description</th>
     </tr>
     <tr>

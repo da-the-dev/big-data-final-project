@@ -65,7 +65,7 @@ in the [final report](./REPORT.pdf).
 
 <table>
     <tr>
-        <th>Parh</th>
+        <th>Path</th>
         <th>Description</th>
     </tr>
         <tr>
