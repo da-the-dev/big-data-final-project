@@ -88,6 +88,11 @@ in the [final report](./REPORT.pdf).
         <td><code><a href='REPORT.pdf'>REPORT.pdf</a></code></td>
         <td>Report for this project</td>
     </tr>
+    </tr>
+        <tr>
+        <td><code><a href='SLIDES.pdf'>SLIDES.pdf</a></code></td>
+        <td>Presentation for this project</td>
+    </tr>
     <tr>
         <td><code><a href='main.sh'>main.sh</a></code></td>
         <td>Staring point of the whole pipeline</td>
