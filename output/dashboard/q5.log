@@ -1,0 +1,28 @@
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> USE team26_projectdb;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> DROP TABLE IF EXISTS ${hivevar:RE SULT_TABLE};
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE EXTERNAL TABLE ${hivevar:R ESULT_TABLE} (
+. . . . . . . . . . . . . . . . . . . . . . .>     day_of_week INT,        -- 1  = Sunday … 7 = Saturday
+. . . . . . . . . . . . . . . . . . . . . . .>     avg_delay DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     count BIGINT
+. . . . . . . . . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . . . . . . . . .> LOCATION '${hivevar:WAREHOUSE_PAT H}';
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> INSERT INTO ${hivevar:RESULT_TABL E}
+. . . . . . . . . . . . . . . . . . . . . . .> SELECT
+. . . . . . . . . . . . . . . . . . . . . . .>     DAYOFWEEK(start_time) AS day_ of_week,
+. . . . . . . . . . . . . . . . . . . . . . .>     AVG(delay_from_typical_traffi c) AS avg_delay,
+. . . . . . . . . . . . . . . . . . . . . . .>     COUNT(*) AS count
+. . . . . . . . . . . . . . . . . . . . . . .> FROM traffic_partitioned
+. . . . . . . . . . . . . . . . . . . . . . .> GROUP BY DAYOFWEEK(start_time)
+. . . . . . . . . . . . . . . . . . . . . . .> ORDER BY day_of_week;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> INSERT OVERWRITE DIRECTORY '${hiv evar:OUTPUT_PATH}'
+. . . . . . . . . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . . . . . . . . .> SELECT * FROM ${hivevar:RESULT_TA BLE};
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 

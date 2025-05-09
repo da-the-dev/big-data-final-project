@@ -1,0 +1,86 @@
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> DROP DATABASE IF EXISTS team26_pr ojectdb CASCADE;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE DATABASE team26_projectdb  LOCATION "project/hive/warehouse";
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> USE team26_projectdb;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> SET hive.exec.dynamic.partition=t rue;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> SET hive.exec.dynamic.partition.m ode=nonstrict;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> SET hive.optimize.sort.dynamic.pa rtition=true;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE EXTERNAL TABLE traffic (
+. . . . . . . . . . . . . . . . . . . . . . .>   id STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   severity INT,
+. . . . . . . . . . . . . . . . . . . . . . .>   start_lat DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   start_lng DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   start_time BIGINT,
+. . . . . . . . . . . . . . . . . . . . . . .>   end_time BIGINT,
+. . . . . . . . . . . . . . . . . . . . . . .>   distance DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   delay_from_typical_traffic DOUB LE,
+. . . . . . . . . . . . . . . . . . . . . . .>   delay_from_free_flow_speed DOUB LE,
+. . . . . . . . . . . . . . . . . . . . . . .>   congestion_speed STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   description STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   street STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   city STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   county STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   state STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   country STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   zip_code STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   local_time_zone STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   weather_station_airport_code ST RING,
+. . . . . . . . . . . . . . . . . . . . . . .>   weather_time_stamp BIGINT,
+. . . . . . . . . . . . . . . . . . . . . . .>   temperature DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   wind_chill DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   humidity DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   pressure DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   visibility DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   wind_dir STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   wind_speed DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   precipitation DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>   weather_event STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>   weather_conditions STRING
+. . . . . . . . . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . . . . . . . . .> STORED AS PARQUET
+. . . . . . . . . . . . . . . . . . . . . . .> LOCATION 'project/warehouse/traff ic';
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE TABLE states_list 
+. . . . . . . . . . . . . . . . . . . . . . .> STORED AS ORC AS
+. . . . . . . . . . . . . . . . . . . . . . .> SELECT DISTINCT state 
+. . . . . . . . . . . . . . . . . . . . . . .> FROM traffic 
+. . . . . . . . . . . . . . . . . . . . . . .> WHERE state IS NOT NULL AND state  != '';
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE EXTERNAL TABLE traffic_par titioned (
+. . . . . . . . . . . . . . . . . . . . . . .>     id STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     severity INT,
+. . . . . . . . . . . . . . . . . . . . . . .>     start_lat DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     start_lng DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     start_time TIMESTAMP,
+. . . . . . . . . . . . . . . . . . . . . . .>     end_time TIMESTAMP,
+. . . . . . . . . . . . . . . . . . . . . . .>     distance DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     delay_from_typical_traffic DO UBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     delay_from_free_flow_speed DO UBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     congestion_speed STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     description STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     street STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     city STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     county STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     country STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     zip_code STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     local_time_zone STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     weather_station_airport_code  STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     weather_time_stamp TIMESTAMP, 
+. . . . . . . . . . . . . . . . . . . . . . .>     temperature DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     wind_chill DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     humidity DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     pressure DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     visibility DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     wind_dir STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     wind_speed DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     precipitation DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     weather_event STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     weather_conditions STRING
+. . . . . . . . . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . . . . . . . . .> PARTITIONED BY (state STRING)
+. . . . . . . . . . . . . . . . . . . . . . .> CLUSTERED BY (city) INTO 4 BUCKET S
+. . . . . . . . . . . . . . . . . . . . . . .> STORED AS PARQUET
+. . . . . . . . . . . . . . . . . . . . . . .> LOCATION 'project/hive/warehouse/ traffic_partitioned';
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 

@@ -1,0 +1,35 @@
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> USE ${DB_NAME};
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE EXTERNAL TABLE IF NOT EXIS TS model1_predictions (
+. . . . . . . . . . . . . . . . . . . . . . .>     delay_from_typical_traffic DO UBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     prediction DOUBLE
+. . . . . . . . . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . . . . . . . . .> STORED AS TEXTFILE
+. . . . . . . . . . . . . . . . . . . . . . .> LOCATION '${MODEL1_LOCATION}'
+. . . . . . . . . . . . . . . . . . . . . . .> TBLPROPERTIES ('skip.header.line. count'='1');
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE EXTERNAL TABLE IF NOT EXIS TS model2_predictions (
+. . . . . . . . . . . . . . . . . . . . . . .>     delay_from_typical_traffic DO UBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     prediction DOUBLE
+. . . . . . . . . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . . . . . . . . .> STORED AS TEXTFILE
+. . . . . . . . . . . . . . . . . . . . . . .> LOCATION '${MODEL2_LOCATION}'
+. . . . . . . . . . . . . . . . . . . . . . .> TBLPROPERTIES ('skip.header.line. count'='1');
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE EXTERNAL TABLE IF NOT EXIS TS model_evaluation (
+. . . . . . . . . . . . . . . . . . . . . . .>     Model STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     RMSE DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     R2 DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     MAE DOUBLE
+. . . . . . . . . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . . . . . . . . .> STORED AS TEXTFILE
+. . . . . . . . . . . . . . . . . . . . . . .> LOCATION '${EVAL_LOCATION}'
+. . . . . . . . . . . . . . . . . . . . . . .> TBLPROPERTIES ('skip.header.line. count'='1');
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 

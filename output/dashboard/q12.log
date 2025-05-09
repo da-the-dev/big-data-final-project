@@ -1,0 +1,31 @@
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> USE team26_projectdb;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> DROP TABLE IF EXISTS ${hivevar:RE SULT_TABLE};
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE EXTERNAL TABLE ${hivevar:R ESULT_TABLE} (
+. . . . . . . . . . . . . . . . . . . . . . .>     lat_bucket DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     lng_bucket DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     avg_delay DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     count BIGINT
+. . . . . . . . . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . . . . . . . . .> LOCATION '${hivevar:WAREHOUSE_PAT H}';
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> INSERT INTO ${hivevar:RESULT_TABL E}
+. . . . . . . . . . . . . . . . . . . . . . .> SELECT
+. . . . . . . . . . . . . . . . . . . . . . .>     FLOOR(start_lat * 10) / 10.0  AS lat_bucket,
+. . . . . . . . . . . . . . . . . . . . . . .>     FLOOR(start_lng * 10) / 10.0  AS lng_bucket,
+. . . . . . . . . . . . . . . . . . . . . . .>     AVG(delay_from_typical_traffi c) AS avg_delay,
+. . . . . . . . . . . . . . . . . . . . . . .>     COUNT(*) AS count
+. . . . . . . . . . . . . . . . . . . . . . .> FROM traffic_partitioned
+. . . . . . . . . . . . . . . . . . . . . . .> GROUP BY
+. . . . . . . . . . . . . . . . . . . . . . .>     FLOOR(start_lat * 10) / 10.0, 
+. . . . . . . . . . . . . . . . . . . . . . .>     FLOOR(start_lng * 10) / 10.0; 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> INSERT OVERWRITE DIRECTORY '${hiv evar:OUTPUT_PATH}'
+. . . . . . . . . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . . . . . . . . .> SELECT * FROM ${hivevar:RESULT_TA BLE};
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 

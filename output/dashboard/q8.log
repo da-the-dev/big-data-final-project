@@ -1,0 +1,39 @@
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> USE team26_projectdb;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> DROP TABLE IF EXISTS ${hivevar:RE SULT_TABLE};
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> CREATE EXTERNAL TABLE ${hivevar:R ESULT_TABLE} (
+. . . . . . . . . . . . . . . . . . . . . . .>     visibility_bucket STRING,
+. . . . . . . . . . . . . . . . . . . . . . .>     avg_delay DOUBLE,
+. . . . . . . . . . . . . . . . . . . . . . .>     count BIGINT
+. . . . . . . . . . . . . . . . . . . . . . .> )
+. . . . . . . . . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . . . . . . . . .> LOCATION '${hivevar:WAREHOUSE_PAT H}';
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> INSERT INTO ${hivevar:RESULT_TABL E}
+. . . . . . . . . . . . . . . . . . . . . . .> SELECT
+. . . . . . . . . . . . . . . . . . . . . . .>     CASE
+. . . . . . . . . . . . . . . . . . . . . . .>         WHEN visibility < 1 THEN  '<1 mi'
+. . . . . . . . . . . . . . . . . . . . . . .>         WHEN visibility >= 1 AND  visibility < 3 THEN '1–3 mi'
+. . . . . . . . . . . . . . . . . . . . . . .>         WHEN visibility >= 3 AND  visibility < 5 THEN '3–5 mi'
+. . . . . . . . . . . . . . . . . . . . . . .>         ELSE '>5 mi'
+. . . . . . . . . . . . . . . . . . . . . . .>     END AS visibility_bucket,
+. . . . . . . . . . . . . . . . . . . . . . .>     AVG(delay_from_typical_traffi c) AS avg_delay,
+. . . . . . . . . . . . . . . . . . . . . . .>     COUNT(*) AS count
+. . . . . . . . . . . . . . . . . . . . . . .> FROM traffic_partitioned
+. . . . . . . . . . . . . . . . . . . . . . .> WHERE visibility IS NOT NULL
+. . . . . . . . . . . . . . . . . . . . . . .> GROUP BY CASE
+. . . . . . . . . . . . . . . . . . . . . . .>     WHEN visibility < 1 THEN '<1  mi'
+. . . . . . . . . . . . . . . . . . . . . . .>     WHEN visibility >= 1 AND visi bility < 3 THEN '1–3 mi'
+. . . . . . . . . . . . . . . . . . . . . . .>     WHEN visibility >= 3 AND visi bility < 5 THEN '3–5 mi'
+. . . . . . . . . . . . . . . . . . . . . . .>     ELSE '>5 mi'
+. . . . . . . . . . . . . . . . . . . . . . .> END
+. . . . . . . . . . . . . . . . . . . . . . .> ORDER BY avg_delay DESC;
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> INSERT OVERWRITE DIRECTORY '${hiv evar:OUTPUT_PATH}'
+. . . . . . . . . . . . . . . . . . . . . . .> ROW FORMAT DELIMITED
+. . . . . . . . . . . . . . . . . . . . . . .> FIELDS TERMINATED BY ','
+. . . . . . . . . . . . . . . . . . . . . . .> SELECT * FROM ${hivevar:RESULT_TA BLE};
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
+0: jdbc:hive2://hadoop-03.uni.innopolis.ru:10> 
