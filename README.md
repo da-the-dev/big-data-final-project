@@ -61,7 +61,7 @@ platform for both real-time and historical traffic congestion data.
 Full details of our methodology, findings, and system architecture are available
 in the [final report](./REPORT.pdf).
 
-## Folder Structure
+## Repository Overview
 
 <table>
     <tr>
